@@ -1,4 +1,4 @@
-package Datatypes;
+package com.passswordmanager.Datatypes;
 
 public class Password {
     private String name;

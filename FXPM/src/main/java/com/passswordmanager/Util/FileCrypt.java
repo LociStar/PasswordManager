@@ -1,4 +1,4 @@
-package Util;
+package com.passswordmanager.Util;
 
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.passay.CharacterData;
@@ -12,8 +12,8 @@ import java.util.*;
 public abstract class FileCrypt {
     public static Map<String, String> getPasswords(String masterPassword) throws FileNotFoundException {
         Map<String, String> hashMap = new HashMap<>();
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        File file = new File("D:\\Programms\\Java\\IdeaProjects\\PasswordManager\\Frontend\\src\\main\\resources\\pw.txt");//classloader.getResource("pw.txt").getPath());
+        //ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        File file = new File(FileCrypt.class.getResource("/pw.txt").getPath());
         Scanner fileReader = new Scanner(file);
         while (fileReader.hasNextLine()) {
             String[] data = fileReader.nextLine().trim().split(":");
@@ -26,7 +26,7 @@ public abstract class FileCrypt {
 
     public static boolean addPwToFile(String name, String password, String masterPassword) {
         try {
-            File file = new File("D:\\Programms\\Java\\IdeaProjects\\PasswordManager\\Frontend\\src\\main\\resources\\pw.txt");
+            File file = new File(FileCrypt.class.getResource("/pw.txt").getPath());
             FileOutputStream fw = new FileOutputStream(file, true);
 
             AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();

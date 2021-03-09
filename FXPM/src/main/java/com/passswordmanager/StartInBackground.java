@@ -1,5 +1,7 @@
-import Controllers.LoginPageController;
-import Controllers.PasswordListController;
+package com.passswordmanager;
+
+import com.passswordmanager.Controllers.LoginPageController;
+import com.passswordmanager.Controllers.PasswordListController;
 import javafx.application.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
@@ -50,6 +52,7 @@ public class StartInBackground extends Application {
 
         //load fxml
         FXMLLoader loaderLP = loadFXML("loginPage");
+        System.out.println(loaderLP.getLocation());
         Parent parent = loaderLP.load();
         this.loginPageController = loaderLP.getController();
         Scene scene = new Scene(parent);
@@ -172,6 +175,6 @@ public class StartInBackground extends Application {
     }
 
     private static FXMLLoader loadFXML(String fxml) throws IOException {
-        return new FXMLLoader(Startup.class.getResource(fxml + ".fxml"));
+        return new FXMLLoader(StartInBackground.class.getResource("/" + fxml + ".fxml"));
     }
 }

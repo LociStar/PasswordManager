@@ -1,7 +1,7 @@
-package Controllers;
+package com.passswordmanager.Controllers;
 
-import Datatypes.Password;
-import Util.FileCrypt;
+import com.passswordmanager.Datatypes.Password;
+import com.passswordmanager.Util.FileCrypt;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

@@ -1,5 +1,6 @@
+package com.passswordmanager.TestMain;
+
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,7 +25,7 @@ public class Startup extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        scene = new Scene(loadFXML("LoginPage"));
+        scene = new Scene(loadFXML("loginPage"));
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.show();
@@ -64,7 +65,7 @@ public class Startup extends Application {
             }
         });
         // optional : adding a popup menu for the icon
-        PopupMenu popup = new PopupMenu("Test");
+        PopupMenu popup = new PopupMenu("com.passswordmanager.TestMain.Test");
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

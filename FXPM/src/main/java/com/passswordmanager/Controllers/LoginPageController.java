@@ -1,6 +1,6 @@
-package Controllers;
+package com.passswordmanager.Controllers;
 
-import Util.FileCrypt;
+import com.passswordmanager.Util.FileCrypt;
 import com.lambdaworks.crypto.SCryptUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,7 +25,7 @@ public class LoginPageController {
     private Parent parent;
 
     public void onUnlockPressed(ActionEvent actionEvent) throws IOException {
-        String hash = "$s0$e1010$Agp1G+2SoOMxVBOqG834zA==$KY1IgtzmZF+QbutrZayN/C41f11om7np+JXVF0GbTtM=";
+        String hash = "$s0$30808$EIjYo1QSYopS4FBUoAJgBw==$Alr+ZkCNpNxnAA2R4PCAYzfSSMF3oj47tpSrad7OA0w=";
         boolean matched = SCryptUtil.check(masterPassword.getText(), hash);
         if (matched) {
             printPasswords(masterPassword.getText());
