@@ -20,6 +20,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * FXML Controller to control passwordListController.fxml
+ */
 public class PasswordListController {
     @FXML
     public TableView<Password> tableView;
@@ -31,6 +34,9 @@ public class PasswordListController {
     private LoginPageController loginPageController;
     private ContextMenu contextMenu;
 
+    /**
+     * Constructor, creates the context menu for the table view
+     */
     public PasswordListController() {
         contextMenu = new ContextMenu();
         MenuItem copyName = new MenuItem("copy Name");
@@ -42,18 +48,29 @@ public class PasswordListController {
         copyPassword.setOnAction(event -> getPassword());
     }
 
+    /**
+     * copy the name to the clipboard
+     */
     public void getName() {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                 new StringSelection(tableView.getSelectionModel().getSelectedItem().getName()), null
         );
     }
 
+    /**
+     * copy the password to the clipboard
+     */
     public void getPassword() {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                 new StringSelection(tableView.getSelectionModel().getSelectedItem().getPassword()), null
         );
     }
 
+    /**
+     * Decrypts the password list and loads the passwords into the table view
+     * @param masterPassword master password to decrypt the password list
+     * @throws FileNotFoundException password list not found
+     */
     public void loadTable(String masterPassword) throws FileNotFoundException {
         Map<String, String> hashMap = FileCrypt.getPasswords(masterPassword);
         ObservableList<Password> data = FXCollections.observableArrayList();
@@ -63,35 +80,51 @@ public class PasswordListController {
         tableView.setItems(data);
     }
 
-    private static FXMLLoader loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginPageController.class.getResource(fxml + ".fxml"));
-        fxmlLoader.setLocation(LoginPageController.class.getResource("/loginPage.fxml"));
-
-        return fxmlLoader;
-    }
-
+    /**
+     * gets the login page controller
+     * @return login page controller
+     */
     public LoginPageController getLoginPageController() {
         return loginPageController;
     }
 
+    /**
+     * sets the login page controller
+     * @param loginPageController login page controller
+     */
     public void setLoginPageController(LoginPageController loginPageController) {
         this.loginPageController = loginPageController;
     }
 
-    public void onRandomPressed(ActionEvent actionEvent) {
+    /**
+     * sets the passwordField to a random password
+     */
+    public void onRandomPressed() {
         passwordField.setText(FileCrypt.generatePassword());
     }
 
-    public void onAddPressed(ActionEvent actionEvent) throws FileNotFoundException {
+    /**
+     * adds a new password to the passwordField and the password lost file
+     * @throws FileNotFoundException password list not found
+     */
+    public void onAddPressed() throws FileNotFoundException {
         FileCrypt.addPwToFile(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText());
         nameField.setText("");
         loadTable(loginPageController.masterPassword.getText());
     }
 
+    /**
+     * handles the context menu request
+     * @param contextMenuEvent ContextMenuEvent
+     */
     public void onContextMenuRequested(ContextMenuEvent contextMenuEvent) {
         contextMenu.show(tableView, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
     }
 
+    /**
+     * hides the context menu with mouse left click
+     * @param mouseEvent mouse left click
+     */
     public void onMouseClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getSource() instanceof TableView) {
             contextMenu.hide();

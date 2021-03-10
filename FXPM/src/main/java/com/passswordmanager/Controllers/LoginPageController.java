@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * FXML Controller to control loginPage.fxml
+ */
 public class LoginPageController {
     @FXML
     public PasswordField masterPassword;
@@ -24,7 +27,14 @@ public class LoginPageController {
     private Stage passwordStage;
     private Parent parent;
 
-    public void onUnlockPressed(ActionEvent actionEvent) throws IOException {
+    /**
+     * Handles the event, if the unlock button is pressed.
+     * Changes Scene, if password does match.
+     *
+     * @throws IOException Input exception
+     */
+    public void onUnlockPressed() throws IOException {
+        //the hashed master password
         String hash = "$s0$30808$EIjYo1QSYopS4FBUoAJgBw==$Alr+ZkCNpNxnAA2R4PCAYzfSSMF3oj47tpSrad7OA0w=";
         boolean matched = SCryptUtil.check(masterPassword.getText(), hash);
         if (matched) {
@@ -34,33 +44,27 @@ public class LoginPageController {
             Window window = scene.getWindow();
             Stage stage = (Stage) window;
             stage.hide();
-            //stage.initStyle(StageStyle.DECORATED);
-
-            //FXMLLoader loader = loadFXML("passwordListUI");
-            //Parent parent = loader.load();
-            //passwordListController.setLoginPageController(this);
             passwordListController.loadTable(masterPassword.getText());
-
-            //Stage mainStage = new Stage();
-            //mainStage.setScene(parent.getScene());
-            //mainStage.initStyle(StageStyle.DECORATED);
-            //mainStage.setOnHiding(event -> mainStage.hide());
-
             stage = passwordStage;
-            //stage.setScene(newScene);
             stage.show();
-
-            //FXMLLoader loader = new FXMLLoader(); // create and load() view
-            //masterPassword.getScene().setRoot(loader.getRoot());
         }
 
     }
 
+    /**
+     * On X clicked, hide the scene
+     */
     public void onXClicked() {
         Stage stage = (Stage) masterPassword.getScene().getWindow();
         stage.hide();
     }
 
+    /**
+     * print Passwords
+     *
+     * @param masterPassword master password to decrypt the password list
+     * @throws FileNotFoundException password list not found
+     */
     private void printPasswords(String masterPassword) throws FileNotFoundException {
         Map<String, String> hashMap = new HashMap<>();
         hashMap = FileCrypt.getPasswords(masterPassword);
@@ -68,34 +72,40 @@ public class LoginPageController {
 
     }
 
-    private static FXMLLoader loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginPageController.class.getResource(fxml + ".fxml"));
-        fxmlLoader.setLocation(LoginPageController.class.getResource("/passwordListUI.fxml"));
-
-        return fxmlLoader;
-    }
-
+    /**
+     * Returns the password controller
+     *
+     * @return password controller
+     */
     public PasswordListController getPasswordListController() {
         return passwordListController;
     }
 
+    /**
+     * Sets the password controller
+     *
+     * @param passwordListController password controller
+     */
     public void setPasswordListController(PasswordListController passwordListController) {
         this.passwordListController = passwordListController;
     }
 
+    /**
+     * Gets the password Stage
+     *
+     * @return password stage
+     */
     public Stage getPasswordStage() {
         return passwordStage;
     }
 
+    /**
+     * Sets the password stage
+     *
+     * @param passwordStage password stage
+     */
     public void setPasswordStage(Stage passwordStage) {
         this.passwordStage = passwordStage;
     }
 
-    public Parent getParent() {
-        return parent;
-    }
-
-    public void setParent(Parent parent) {
-        this.parent = parent;
-    }
 }

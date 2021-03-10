@@ -1,5 +1,8 @@
 package com.passswordmanager.Datatypes;
 
+/**
+ * Representation of a password
+ */
 public class Password {
     private String name;
     private String password;

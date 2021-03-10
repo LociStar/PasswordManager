@@ -9,7 +9,16 @@ import org.passay.PasswordGenerator;
 import java.io.*;
 import java.util.*;
 
+/**
+ * abstract class to Handle the encryption/ decryption and hashing
+ */
 public abstract class FileCrypt {
+    /**
+     * generate a decrypted Map of name-password
+     * @param masterPassword master password for decryption
+     * @return Map<name, password>
+     * @throws FileNotFoundException password list not found
+     */
     public static Map<String, String> getPasswords(String masterPassword) throws FileNotFoundException {
         Map<String, String> hashMap = new HashMap<>();
         //ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -24,6 +33,13 @@ public abstract class FileCrypt {
         return hashMap;
     }
 
+    /**
+     * adds a new encrypted name-password mapping to the password list file
+     * @param name new name
+     * @param password new password
+     * @param masterPassword master password for encryption
+     * @return true if success
+     */
     public static boolean addPwToFile(String name, String password, String masterPassword) {
         try {
             File file = new File(FileCrypt.class.getResource("/pw.txt").getPath());
@@ -40,6 +56,10 @@ public abstract class FileCrypt {
         }
     }
 
+    /**
+     * generate a new secure password
+     * @return password
+     */
     public static String generatePassword(){
         PasswordGenerator gen = new PasswordGenerator();
         CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;

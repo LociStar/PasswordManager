@@ -167,14 +167,19 @@ public class StartInBackground extends Application {
         }
     }
 
-    public static void main(String[] args) throws IOException, java.awt.AWTException {
+    public static void main(String[] args) {
         // Just launches the JavaFX application.
         // Due to way the application is coded, the application will remain running
         // until the user selects the Exit menu option from the tray icon.
         launch(args);
     }
 
-    private static FXMLLoader loadFXML(String fxml) throws IOException {
+    /**
+     * returns a FXML loader
+     * @param fxml the fxml name
+     * @return FXMLLoader
+     */
+    private static FXMLLoader loadFXML(String fxml) {
         return new FXMLLoader(StartInBackground.class.getResource("/" + fxml + ".fxml"));
     }
 }
