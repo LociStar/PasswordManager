@@ -16,7 +16,7 @@ public abstract class FileCrypt {
     /**
      * generate a decrypted Map of name-password
      * @param masterPassword master password for decryption
-     * @return Map<name, password>
+     * @return Map(name, password)
      * @throws FileNotFoundException password list not found
      */
     public static Map<String, String> getPasswords(String masterPassword) throws FileNotFoundException {
