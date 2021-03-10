@@ -7,12 +7,15 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
@@ -26,6 +29,30 @@ public class PasswordListController {
     public TextField nameField;
 
     private LoginPageController loginPageController;
+    private ContextMenu contextMenu;
+
+    public PasswordListController() {
+        contextMenu = new ContextMenu();
+        MenuItem copyName = new MenuItem("copy Name");
+        MenuItem copyPassword = new MenuItem("copy Password");
+        contextMenu.getItems().add(copyName);
+        contextMenu.getItems().add(copyPassword);
+
+        copyName.setOnAction(event -> getName());
+        copyPassword.setOnAction(event -> getPassword());
+    }
+
+    public void getName() {
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+                new StringSelection(tableView.getSelectionModel().getSelectedItem().getName()), null
+        );
+    }
+
+    public void getPassword() {
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+                new StringSelection(tableView.getSelectionModel().getSelectedItem().getPassword()), null
+        );
+    }
 
     public void loadTable(String masterPassword) throws FileNotFoundException {
         Map<String, String> hashMap = FileCrypt.getPasswords(masterPassword);
@@ -59,5 +86,15 @@ public class PasswordListController {
         FileCrypt.addPwToFile(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText());
         nameField.setText("");
         loadTable(loginPageController.masterPassword.getText());
+    }
+
+    public void onContextMenuRequested(ContextMenuEvent contextMenuEvent) {
+        contextMenu.show(tableView, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+    }
+
+    public void onMouseClicked(MouseEvent mouseEvent) {
+        if (mouseEvent.getSource() instanceof TableView) {
+            contextMenu.hide();
+        }
     }
 }
