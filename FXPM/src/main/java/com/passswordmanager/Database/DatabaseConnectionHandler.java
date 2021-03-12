@@ -74,7 +74,7 @@ public class DatabaseConnectionHandler {
         return delete("pm", "name", name);
     }
 
-    public List<String> selectAll() { //TODO: Change return parameter to a List
+    public List<String> selectAll() {
         try {
             ResultSet rs = st.executeQuery("SELECT * FROM pm; ");
             ResultSetMetaData rsmd = rs.getMetaData();

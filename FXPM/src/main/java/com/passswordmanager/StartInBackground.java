@@ -2,6 +2,8 @@ package com.passswordmanager;
 
 import com.passswordmanager.Controllers.LoginPageController;
 import com.passswordmanager.Controllers.PasswordListController;
+import com.passswordmanager.Database.DatabaseConnectionHandler;
+import com.passswordmanager.TestMain.DBConnectionTest;
 import javafx.application.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
@@ -26,6 +28,7 @@ public class StartInBackground extends Application {
     private Stage passwordStage;
     private Stage loginStage;
     private LoginPageController loginPageController;
+    private DatabaseConnectionHandler db;
 
     // a timer allowing the tray icon to provide a periodic notification event.
     private final Timer notificationTimer = new Timer();
@@ -113,7 +116,7 @@ public class StartInBackground extends Application {
             // to really exit the application, the user must go to the system tray icon
             // and select the exit option, this will shutdown JavaFX and remove the
             // tray icon (removing the tray icon will also shut down AWT).
-            java.awt.MenuItem exitItem = new java.awt.MenuItem("Exit");
+            java.awt.MenuItem exitItem = new java.awt.MenuItem("Close");
             exitItem.addActionListener(event -> {
                 notificationTimer.cancel();
                 Platform.exit();
