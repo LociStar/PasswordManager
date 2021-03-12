@@ -1,5 +1,6 @@
 package com.passswordmanager.Controllers;
 
+import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.Password;
 import com.passswordmanager.Util.FileCrypt;
 import javafx.collections.FXCollections;
@@ -33,6 +34,7 @@ public class PasswordListController {
 
     private LoginPageController loginPageController;
     private ContextMenu contextMenu;
+    private DatabaseConnectionHandler db;
 
     /**
      * Constructor, creates the context menu for the table view
@@ -69,14 +71,13 @@ public class PasswordListController {
     /**
      * Decrypts the password list and loads the passwords into the table view
      * @param masterPassword master password to decrypt the password list
-     * @throws FileNotFoundException password list not found
      */
-    public void loadTable(String masterPassword) throws FileNotFoundException {
-        Map<String, String> hashMap = FileCrypt.getPasswords(masterPassword);
+    public void loadTable(String masterPassword) {
+        Map<String, String> hashMap = FileCrypt.getListDB(masterPassword, db);
         ObservableList<Password> data = FXCollections.observableArrayList();
         hashMap.forEach((s, s2) -> data.add(new Password(s, s2)));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<Password, String>("name"));
-        passwordColumn.setCellValueFactory(new PropertyValueFactory<Password, String>("password"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        passwordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
         tableView.setItems(data);
     }
 
@@ -108,7 +109,7 @@ public class PasswordListController {
      * @throws FileNotFoundException password list not found
      */
     public void onAddPressed() throws FileNotFoundException {
-        FileCrypt.addPwToFile(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText());
+        FileCrypt.addPwToDatabase(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText(), db);
         nameField.setText("");
         loadTable(loginPageController.masterPassword.getText());
     }
@@ -129,5 +130,9 @@ public class PasswordListController {
         if (mouseEvent.getSource() instanceof TableView) {
             contextMenu.hide();
         }
+    }
+
+    public void setDb(DatabaseConnectionHandler db) {
+        this.db = db;
     }
 }

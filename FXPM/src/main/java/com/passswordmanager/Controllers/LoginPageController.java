@@ -1,5 +1,6 @@
 package com.passswordmanager.Controllers;
 
+import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Util.FileCrypt;
 import com.lambdaworks.crypto.SCryptUtil;
 import javafx.event.ActionEvent;
@@ -38,12 +39,11 @@ public class LoginPageController {
         String hash = "$s0$30808$EIjYo1QSYopS4FBUoAJgBw==$Alr+ZkCNpNxnAA2R4PCAYzfSSMF3oj47tpSrad7OA0w=";
         boolean matched = SCryptUtil.check(masterPassword.getText(), hash);
         if (matched) {
-            printPasswords(masterPassword.getText());
-
             Scene scene = masterPassword.getScene();
             Window window = scene.getWindow();
             Stage stage = (Stage) window;
             stage.hide();
+            passwordListController.setDb(new DatabaseConnectionHandler(masterPassword.getText()));
             passwordListController.loadTable(masterPassword.getText());
             stage = passwordStage;
             stage.show();
@@ -57,19 +57,6 @@ public class LoginPageController {
     public void onXClicked() {
         Stage stage = (Stage) masterPassword.getScene().getWindow();
         stage.hide();
-    }
-
-    /**
-     * print Passwords
-     *
-     * @param masterPassword master password to decrypt the password list
-     * @throws FileNotFoundException password list not found
-     */
-    private void printPasswords(String masterPassword) throws FileNotFoundException {
-        Map<String, String> hashMap = new HashMap<>();
-        hashMap = FileCrypt.getPasswords(masterPassword);
-        hashMap.forEach((s, s2) -> System.out.println(s + ": " + s2));
-
     }
 
     /**
