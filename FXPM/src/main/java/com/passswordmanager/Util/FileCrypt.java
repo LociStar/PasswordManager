@@ -1,5 +1,6 @@
 package com.passswordmanager.Util;
 
+import com.passswordmanager.Database.DatabaseConnectionHandler;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.passay.CharacterData;
 import org.passay.CharacterRule;
@@ -15,6 +16,7 @@ import java.util.*;
 public abstract class FileCrypt {
     /**
      * generate a decrypted Map of name-password
+     *
      * @param masterPassword master password for decryption
      * @return Map(name, password)
      * @throws FileNotFoundException password list not found
@@ -34,9 +36,26 @@ public abstract class FileCrypt {
     }
 
     /**
+     * generate a decrypted Map of name-password
+     *
+     * @param masterPassword master password for decryption
+     * @param db             DatabaseConnectionHandler
+     * @return Map(name, password)
+     */
+    public static Map<String, String> getListDB(String masterPassword, DatabaseConnectionHandler db) {
+        Map<String, String> hashMap = db.selectAll();
+        Map<String, String> output = new HashMap<>();
+        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+        aes256TextEncryptor.setPassword(masterPassword);
+        hashMap.forEach((name, pw) -> output.put(aes256TextEncryptor.decrypt(name), aes256TextEncryptor.decrypt(pw)));
+        return output;
+    }
+
+    /**
      * adds a new encrypted name-password mapping to the password list file
-     * @param name new name
-     * @param password new password
+     *
+     * @param name           new name
+     * @param password       new password
      * @param masterPassword master password for encryption
      * @return true if success
      */
@@ -57,10 +76,34 @@ public abstract class FileCrypt {
     }
 
     /**
+     * adds a new encrypted name-password mapping to the password list file
+     *
+     * @param name           new name
+     * @param password       new password
+     * @param masterPassword master password for encryption
+     * @param db             DatabaseConnectionHandler
+     * @return true if success
+     */
+    public static boolean addPwToDatabase(String name, String password, String masterPassword, DatabaseConnectionHandler db) {
+        try {
+
+            AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+            aes256TextEncryptor.setPassword(masterPassword);
+
+            db.insert(aes256TextEncryptor.encrypt(name), aes256TextEncryptor.encrypt(password) + "\n");
+            return true;
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * generate a new secure password
+     *
      * @return password
      */
-    public static String generatePassword(){
+    public static String generatePassword() {
         PasswordGenerator gen = new PasswordGenerator();
         CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;
         CharacterRule lowerCaseRule = new CharacterRule(lowerCaseChars);

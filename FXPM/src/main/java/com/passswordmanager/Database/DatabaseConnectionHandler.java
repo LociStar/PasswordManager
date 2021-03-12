@@ -2,7 +2,9 @@ package com.passswordmanager.Database;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseConnectionHandler {
     private final String url = "jdbc:h2:file:C:/data/passwordManager";
@@ -74,25 +76,18 @@ public class DatabaseConnectionHandler {
         return delete("pm", "name", name);
     }
 
-    public List<String> selectAll() {
+    public Map<String, String> selectAll() {
         try {
-            ResultSet rs = st.executeQuery("SELECT * FROM pm; ");
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnsNumber = rsmd.getColumnCount();
-            List<String> list = new ArrayList<>();
+            ResultSet rs = st.executeQuery("SELECT * FROM pm;");
+            Map<String, String > map = new HashMap<>();
             while (rs.next()) {
-                StringBuilder stringBuilder = new StringBuilder();
-                //Print one row
-                for (int i = 1; i <= columnsNumber; i++) {
-                    //Print one element of a row
-                    stringBuilder.append(rs.getString(i)).append(" ");
-                }
-                list.add(stringBuilder.toString());
+                //put one row into map
+                map.put(rs.getString("name"), rs.getString("pw"));
             }
-            return list;
+            return map;
         } catch (SQLException sqlException) {
             System.out.println("Select Error: " + sqlException.getErrorCode());
         }
-        return new ArrayList<>();
+        return new HashMap<>();
     }
 }
