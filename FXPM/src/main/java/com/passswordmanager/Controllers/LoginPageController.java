@@ -99,7 +99,7 @@ public class LoginPageController {
     }
 
     public void onKeyPressed(KeyEvent keyEvent) throws IOException {
-        if (keyEvent.getCode().equals(KeyCode.ENTER)){
+        if (keyEvent.getCode().equals(KeyCode.ENTER)) {
             onUnlockPressed();
         }
     }
