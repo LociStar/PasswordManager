@@ -47,7 +47,7 @@ public abstract class FileCrypt {
         Map<String, String> output = new HashMap<>();
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(masterPassword);
-        hashMap.forEach((name, pw) -> output.put(aes256TextEncryptor.decrypt(name), aes256TextEncryptor.decrypt(pw)));
+        hashMap.forEach((name, pw) -> output.put(name, aes256TextEncryptor.decrypt(pw)));
         return output;
     }
 
@@ -66,7 +66,7 @@ public abstract class FileCrypt {
 
             AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
             aes256TextEncryptor.setPassword(masterPassword);
-            fw.write((aes256TextEncryptor.encrypt(name) + " : " + aes256TextEncryptor.encrypt(password) + "\n").getBytes());
+            fw.write((name + " : " + aes256TextEncryptor.encrypt(password) + "\n").getBytes());
             fw.close();
             return true;
 
@@ -90,12 +90,24 @@ public abstract class FileCrypt {
             AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
             aes256TextEncryptor.setPassword(masterPassword);
 
-            db.insert(aes256TextEncryptor.encrypt(name), aes256TextEncryptor.encrypt(password) + "\n");
+            db.insert(name, aes256TextEncryptor.encrypt(password) + "\n");
             return true;
 
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static String encryptText(String name, String masterPassword) {
+        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+        aes256TextEncryptor.setPassword(masterPassword);
+        return aes256TextEncryptor.encrypt(name);
+    }
+
+    public static String decryptText(String name, String masterPassword) {
+        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+        aes256TextEncryptor.setPassword(masterPassword);
+        return aes256TextEncryptor.decrypt(name);
     }
 
     /**
@@ -123,7 +135,7 @@ public abstract class FileCrypt {
             }
 
             public String getCharacters() {
-                return "!@#$%^&*()_+";
+                return "!@#$%^&*()_+§$&";
             }
         };
         CharacterRule splCharRule = new CharacterRule(specialChars);

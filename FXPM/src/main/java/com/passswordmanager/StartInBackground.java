@@ -3,18 +3,26 @@ package com.passswordmanager;
 import com.passswordmanager.Controllers.LoginPageController;
 import com.passswordmanager.Controllers.PasswordListController;
 import com.passswordmanager.Database.DatabaseConnectionHandler;
-import com.passswordmanager.TestMain.DBConnectionTest;
 import javafx.application.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
 import javafx.scene.paint.Color;
 import javafx.stage.*;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.jnativehook.dispatcher.SwingDispatchService;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.text.*;
 import java.util.*;
+import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 // Java 8 code
 public class StartInBackground extends Application {
@@ -41,6 +49,7 @@ public class StartInBackground extends Application {
     // interacts with the tray icon.
     @Override
     public void start(final Stage stage) throws IOException {
+
         // stores a reference to the stage.
         this.loginStage = stage;
 
@@ -75,6 +84,9 @@ public class StartInBackground extends Application {
 
         loginPageController.setPasswordListController(passwordListController);
         loginPageController.setPasswordStage(passwordStage);
+
+        //add keyListener Listener
+        javax.swing.SwingUtilities.invokeLater(() -> GlobalScreen.addNativeKeyListener(passwordListController));
     }
 
     /**
@@ -146,8 +158,8 @@ public class StartInBackground extends Application {
                             );
                         }
                     },
-                    5_000,
-                    60_000
+                    0,
+                    1200_000
             );
 
             // add the application tray icon to the system tray.
@@ -171,14 +183,34 @@ public class StartInBackground extends Application {
     }
 
     public static void main(String[] args) {
+
+        try {
+            // Get the logger for "org.jnativehook" and set the level to warning.
+            Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+            logger.setLevel(Level.WARNING);
+
+            // Don't forget to disable the parent handlers.
+            logger.setUseParentHandlers(false);
+
+            GlobalScreen.setEventDispatcher(new SwingDispatchService());
+            GlobalScreen.registerNativeHook();
+        } catch (NativeHookException ex) {
+            System.err.println("There was a problem registering the native hook.");
+            System.err.println(ex.getMessage());
+
+            System.exit(1);
+        }
+
         // Just launches the JavaFX application.
         // Due to way the application is coded, the application will remain running
         // until the user selects the Exit menu option from the tray icon.
+
         launch(args);
     }
 
     /**
      * returns a FXML loader
+     *
      * @param fxml the fxml name
      * @return FXMLLoader
      */

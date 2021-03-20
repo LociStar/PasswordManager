@@ -10,6 +10,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: net.java.dev.jna:jna:5.7.0" level="project" />
+    <orderEntry type="library" name="Maven: net.java.dev.jna:jna-platform:5.7.0" level="project" />
+    <orderEntry type="library" name="Maven: com.1stleg:jnativehook:2.1.0" level="project" />
     <orderEntry type="library" name="Maven: com.h2database:h2:1.4.200" level="project" />
     <orderEntry type="library" name="Maven: org.passay:passay:1.6.0" level="project" />
     <orderEntry type="library" name="Maven: org.jasypt:jasypt:1.9.3" level="project" />

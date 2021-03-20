@@ -7,6 +7,10 @@ public class Password {
     private String name;
     private String password;
 
+    public Password(){
+        new Password("", "");
+    }
+
     public Password(String name, String password) {
         this.name = name;
         this.password = password;

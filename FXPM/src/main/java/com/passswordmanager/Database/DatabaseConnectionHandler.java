@@ -1,11 +1,14 @@
 package com.passswordmanager.Database;
 
+import com.passswordmanager.Datatypes.Password;
+import com.passswordmanager.Util.FileCrypt;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+//
 public class DatabaseConnectionHandler {
     private final String url = "jdbc:h2:file:C:/data/passwordManager";
     private final String user = "sa";
@@ -53,7 +56,7 @@ public class DatabaseConnectionHandler {
             st.execute("INSERT INTO " + dbName + " VALUES('" + name + "', '" + pw + "');");
             return true;
         } catch (SQLException sqlException) {
-            System.out.println("Insert Error: "+ sqlException.getErrorCode());
+            System.out.println("Insert Error: " + sqlException.getErrorCode());
             return false;
         }
     }
@@ -79,7 +82,7 @@ public class DatabaseConnectionHandler {
     public Map<String, String> selectAll() {
         try {
             ResultSet rs = st.executeQuery("SELECT * FROM pm;");
-            Map<String, String > map = new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             while (rs.next()) {
                 //put one row into map
                 map.put(rs.getString("name"), rs.getString("pw"));
@@ -89,5 +92,21 @@ public class DatabaseConnectionHandler {
             System.out.println("Select Error: " + sqlException.getErrorCode());
         }
         return new HashMap<>();
+    }
+
+    public Password getPassword(String name, String masterPassword) {
+        Password password = new Password();
+        try {
+            ResultSet rs = st.executeQuery("SELECT * FROM pm WHERE name='"+ name +"';");
+            while (rs.next()) {
+                //put one row into map
+                password.setName(rs.getString("name"));
+                password.setPassword(rs.getString("pw"));
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+        System.out.println("Debug PW: " + password.getPassword());
+        return password;
     }
 }
