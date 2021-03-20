@@ -149,8 +149,7 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     @Override
-    public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-
+    public void nativeKeyTyped(NativeKeyEvent e) {
     }
 
     @Override
@@ -176,7 +175,7 @@ public class PasswordListController implements NativeKeyListener {
         try {
             Keyboard keyboard = new Keyboard();
             keyboard.type(keys);
-        } catch (AWTException awtException) {
+        } catch (AWTException | InterruptedException awtException) {
             awtException.printStackTrace();
         }
     }
@@ -191,7 +190,7 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     @Override
-    public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
+    public void nativeKeyReleased(NativeKeyEvent e) {
 
     }
 
