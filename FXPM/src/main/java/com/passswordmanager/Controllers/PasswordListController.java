@@ -47,6 +47,30 @@ public class PasswordListController implements NativeKeyListener {
      */
     public PasswordListController() {
 
+
+    }
+
+    /**
+     * copy the name to the clipboard
+     */
+    public void getName() {
+        TableView<Password>  tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+                new StringSelection(tableView.getSelectionModel().getSelectedItem().getUsername()), null
+        );
+    }
+
+    /**
+     * copy the password to the clipboard
+     */
+    public void getPassword() {
+        TableView<Password>  tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+                new StringSelection(tableView.getSelectionModel().getSelectedItem().getPassword()), null
+        );
+    }
+
+    public ContextMenu createContextMenu() {
         contextMenu = new ContextMenu();
         //create new MenuItem
         MenuItem copyName = new MenuItem("copy Name");
@@ -58,24 +82,7 @@ public class PasswordListController implements NativeKeyListener {
         copyName.setOnAction(event -> getName());
         copyPassword.setOnAction(event -> getPassword());
 
-    }
-
-    /**
-     * copy the name to the clipboard
-     */
-    public void getName() {
-//        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-//                new StringSelection(tableView.getSelectionModel().getSelectedItem().getUsername()), null
-//        );
-    }
-
-    /**
-     * copy the password to the clipboard
-     */
-    public void getPassword() {
-//        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-//                new StringSelection(tableView.getSelectionModel().getSelectedItem().getPassword()), null
-//        );
+        return contextMenu;
     }
 
     private TitledPane createTiltedPane(String name, String nickname, Map<String, String> list) {
@@ -90,6 +97,8 @@ public class PasswordListController implements NativeKeyListener {
 
         tableView.getColumns().add(username);
         tableView.getColumns().add(password);
+
+        tableView.setContextMenu(createContextMenu());
 
         ObservableList<Password> data = FXCollections.observableArrayList();
         list.forEach((s, s2) -> data.add(new Password(s, s2)));
