@@ -42,13 +42,16 @@ public abstract class FileCrypt {
      * @param db             DatabaseConnectionHandler
      * @return Map(name, password)
      */
-    public static Map<String, String> getListDB(String masterPassword, DatabaseConnectionHandler db) {
-        Map<String, String> hashMap = db.selectAll();
-        Map<String, String> output = new HashMap<>();
-        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
-        aes256TextEncryptor.setPassword(masterPassword);
-        hashMap.forEach((name, pw) -> output.put(name, aes256TextEncryptor.decrypt(pw)));
-        return output;
+    public static Map<String, Map<String, String>>getListDB(String masterPassword, DatabaseConnectionHandler db) {
+        Map<String, String> pNames = db.getProgramNames();
+        Map<String, Map<String, String>> hashMap = new HashMap<>();
+        pNames.forEach((s, s2) -> hashMap.put(s+":"+s2, db.getUsrPwNames(s)));
+//        Map<String, String> output = new HashMap<>();
+//        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+//        aes256TextEncryptor.setPassword(masterPassword);
+//        hashMap.forEach((name, pw) -> output.put(name, aes256TextEncryptor.decrypt(pw)));
+//        return output;
+        return hashMap;
     }
 
     /**
@@ -84,13 +87,13 @@ public abstract class FileCrypt {
      * @param db             DatabaseConnectionHandler
      * @return true if success
      */
-    public static boolean addPwToDatabase(String name, String password, String masterPassword, DatabaseConnectionHandler db) {
+    public static boolean addPwToDatabase(String name, String password, String masterPassword, String programName, DatabaseConnectionHandler db) {
         try {
 
             AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
             aes256TextEncryptor.setPassword(masterPassword);
 
-            db.insert(name, aes256TextEncryptor.encrypt(password) + "\n");
+            db.insert(name, aes256TextEncryptor.encrypt(password), programName, "");
             return true;
 
         } catch (Exception e) {
