@@ -162,10 +162,10 @@ public class DatabaseConnectionHandler {
     public Program getPasswords(String pName) {
         List<Password> passwords = new ArrayList<>();
         try {
-            ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE pName='" + pName + "';");
+            ResultSet rs = st.executeQuery("SELECT username, pw FROM Password WHERE pName='" + pName + "';");
             while (rs.next()) {
                 //add Passwords to List
-                passwords.add(new Password(rs.getString("name"), rs.getString("pw")));
+                passwords.add(new Password(rs.getString("username"), rs.getString("pw")));
             }
         } catch (SQLException sqlException) {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
