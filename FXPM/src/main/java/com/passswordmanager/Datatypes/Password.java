@@ -4,24 +4,24 @@ package com.passswordmanager.Datatypes;
  * Representation of a password
  */
 public class Password {
-    private String name;
+    private String username;
     private String password;
 
-    public Password(){
+    public Password() {
         new Password("", "");
     }
 
-    public Password(String name, String password) {
-        this.name = name;
+    public Password(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

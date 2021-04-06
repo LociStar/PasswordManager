@@ -1,16 +1,17 @@
 package com.passswordmanager.Database;
 
 import com.passswordmanager.Datatypes.Password;
-import com.passswordmanager.Util.FileCrypt;
+import com.passswordmanager.Datatypes.Entry;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 //
 public class DatabaseConnectionHandler {
-    private final String url = "jdbc:h2:file:C:/data/passwordManager";
+    private final String url = "jdbc:h2:file:C:/data/passwordManager;mode=MySQL";
     private final String user = "sa";
 
     private Connection con;
@@ -22,8 +23,20 @@ public class DatabaseConnectionHandler {
 
     public void createDB(String password) {
         String query = "ALTER USER sa SET PASSWORD '" + password + "'";
-        String createTable = "create table pm\n" +
-                "(name VARCHAR(255) PRIMARY KEY, pw VARCHAR(255));";
+        String createTable = "CREATE TABLE ProgramName\n" +
+                "(name varchar(255) NOT NULL ,\n" +
+                " nickname varchar(255) ,\n " +
+                "PRIMARY KEY (name));";
+        String crateTablePasswords = "CREATE TABLE Password\n" +
+                "(\n" +
+                " id       int AUTO_INCREMENT ,\n" +
+                " username varchar(255) ,\n" +
+                " pw       varchar(255) NOT NULL ,\n" +
+                " pName     varchar(255) NOT NULL ,\n" +
+                "\n" +
+                "PRIMARY KEY (id),\n" +
+                "CONSTRAINT FK FOREIGN KEY (pName) REFERENCES ProgramName (name)\n" +
+                ");";
         try {
             this.con = DriverManager.getConnection(url, user, "");
             this.st = con.createStatement();
@@ -37,6 +50,7 @@ public class DatabaseConnectionHandler {
             assert st != null;
             st.execute(query);
             st.execute(createTable);
+            st.execute(crateTablePasswords);
         } catch (Exception throwables) {
             throwables.printStackTrace();
         }
@@ -47,27 +61,29 @@ public class DatabaseConnectionHandler {
             this.con = DriverManager.getConnection(url, user, passwd);
             this.st = con.createStatement();
         } catch (SQLException ignored) {
-
+            ignored.printStackTrace();
         }
     }
 
-    public boolean insert(String dbName, String name, String pw) {
+    public boolean insert(String username, String pw, String programName, String nickname) {
+
+        nickname = nickname.equals("") ? programName : nickname;
+
         try {
-            st.execute("INSERT INTO " + dbName + " VALUES('" + name + "', '" + pw + "');");
+            st.execute("INSERT INTO ProgramName (name, nickname) VALUES('" + programName + "', '" + nickname + "')\n " +
+                    "ON DUPLICATE KEY UPDATE nickname=nickname;");
+            st.execute("INSERT INTO Password (username, pw, pName) VALUES ('" + username + "', '" + pw + "', '" + programName + "' )\n" +
+                    "ON DUPLICATE KEY UPDATE pw=pw;");
             return true;
         } catch (SQLException sqlException) {
-            System.out.println("Insert Error: " + sqlException.getErrorCode());
+            System.out.println("Insert Error: " + sqlException.getMessage());
             return false;
         }
     }
 
-    public boolean insert(String name, String pw) {
-        return insert("pm", name, pw);
-    }
-
-    public boolean delete(String dbName, String column, String name) {
+    public boolean delete(String username, String programName) {
         try {
-            st.execute("DELETE FROM " + dbName + " WHERE " + column + " = '" + name + "';");
+            st.execute("DELETE FROM Password WHERE username='" + username + "' AND WHERE pName='" + programName + "';");
             return true;
         } catch (SQLException sqlException) {
             System.out.println("Delete Error: " + sqlException.getErrorCode());
@@ -75,17 +91,43 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    public boolean delete(String name) {
-        return delete("pm", "name", name);
+    public Map<String, String> getProgramNames() {
+        try {
+            ResultSet rs = st.executeQuery("SELECT name, nickname FROM ProgramName;");
+            Map<String, String> map = new HashMap<>();
+            while (rs.next()) {
+                //put one row into map
+                map.put(rs.getString("name"), rs.getString("nickname"));
+            }
+            return map;
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error: " + sqlException.getMessage());
+        }
+        return new HashMap<>();
+    }
+
+    public Map<String, String> getUsrPwNames(String programName) {
+        try {
+            ResultSet rs = st.executeQuery("SELECT username, pw FROM Password WHERE pName='" + programName + "';");
+            Map<String, String> map = new HashMap<>();
+            while (rs.next()) {
+                //put one row into map
+                map.put(rs.getString("username"), rs.getString("pw"));
+            }
+            return map;
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error: " + sqlException.getMessage());
+        }
+        return new HashMap<>();
     }
 
     public Map<String, String> selectAll() {
         try {
-            ResultSet rs = st.executeQuery("SELECT * FROM pm;");
+            ResultSet rs = st.executeQuery("SELECT * FROM Password;");
             Map<String, String> map = new HashMap<>();
             while (rs.next()) {
                 //put one row into map
-                map.put(rs.getString("name"), rs.getString("pw"));
+                map.put(rs.getString("username"), rs.getString("pw"));
             }
             return map;
         } catch (SQLException sqlException) {
@@ -94,19 +136,40 @@ public class DatabaseConnectionHandler {
         return new HashMap<>();
     }
 
-    public Password getPassword(String name, String masterPassword) {
-        Password password = new Password();
+    public Password getPassword(String username, String nickname) {
+        Entry entry = new Entry();
+        entry.setNickname(nickname);
+        Password password = new Password(username, "");
         try {
-            ResultSet rs = st.executeQuery("SELECT * FROM pm WHERE name='"+ name +"';");
+            System.out.println(nickname);
+            System.out.println(username);
+            ResultSet resultSet = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nickname + "';");
+            while (resultSet.next()) {
+                //add Passwords to List
+                entry.setTitle(resultSet.getString("name"));
+            }
+            ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE pName='" + entry.getTitle() + "';");
             while (rs.next()) {
-                //put one row into map
-                password.setName(rs.getString("name"));
-                password.setPassword(rs.getString("pw"));
+                //add Passwords to List
+                password = new Password(username, rs.getString("pw"));
             }
         } catch (SQLException sqlException) {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
         }
-        System.out.println("Debug PW: " + password.getPassword());
         return password;
+    }
+
+    public Entry getPasswords(String pName) {
+        List<Password> passwords = new ArrayList<>();
+        try {
+            ResultSet rs = st.executeQuery("SELECT username, pw FROM Password WHERE pName='" + pName + "';");
+            while (rs.next()) {
+                //add Passwords to List
+                passwords.add(new Password(rs.getString("username"), rs.getString("pw")));
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+        return new Entry(pName, passwords);
     }
 }

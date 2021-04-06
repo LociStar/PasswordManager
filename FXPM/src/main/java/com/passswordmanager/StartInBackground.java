@@ -153,6 +153,7 @@ public class StartInBackground extends Application {
                                                 "Password Manager locked",
                                                 java.awt.TrayIcon.MessageType.INFO
                                         );
+                                        //Password reset
                                         loginPageController.masterPassword.setText("");
                                     }
                             );
