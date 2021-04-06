@@ -61,13 +61,15 @@ public class DatabaseConnectionHandler {
             this.con = DriverManager.getConnection(url, user, passwd);
             this.st = con.createStatement();
         } catch (SQLException ignored) {
-
+            ignored.printStackTrace();
         }
     }
 
     public boolean insert(String username, String pw, String programName, String nickname) {
-        try {
 
+        nickname = nickname.equals("") ? programName : nickname;
+
+        try {
             st.execute("INSERT INTO ProgramName (name, nickname) VALUES('" + programName + "', '" + nickname + "')\n " +
                     "ON DUPLICATE KEY UPDATE nickname=nickname;");
             st.execute("INSERT INTO Password (username, pw, pName) VALUES ('" + username + "', '" + pw + "', '" + programName + "' )\n" +
@@ -134,7 +136,30 @@ public class DatabaseConnectionHandler {
         return new HashMap<>();
     }
 
-    public Program getPassword(String pName) {
+    public Password getPassword(String username, String nickname) {
+        Program program = new Program();
+        program.setNickname(nickname);
+        Password password = new Password(username, "");
+        try {
+            System.out.println(nickname);
+            System.out.println(username);
+            ResultSet resultSet = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nickname + "';");
+            while (resultSet.next()) {
+                //add Passwords to List
+                program.setTitle(resultSet.getString("name"));
+            }
+            ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE pName='" + program.getTitle() + "';");
+            while (rs.next()) {
+                //add Passwords to List
+                password = new Password(username, rs.getString("pw"));
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+        return password;
+    }
+
+    public Program getPasswords(String pName) {
         List<Password> passwords = new ArrayList<>();
         try {
             ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE pName='" + pName + "';");

@@ -2,7 +2,6 @@ package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.Password;
-import com.passswordmanager.Datatypes.Program;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
 import com.sun.jna.Native;
@@ -11,20 +10,25 @@ import com.sun.jna.platform.win32.WinDef;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import org.jasypt.util.text.AES256TextEncryptor;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.FileNotFoundException;
-import java.sql.Array;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -54,7 +58,7 @@ public class PasswordListController implements NativeKeyListener {
      * copy the name to the clipboard
      */
     public void getName() {
-        TableView<Password>  tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
+        TableView<Password> tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                 new StringSelection(tableView.getSelectionModel().getSelectedItem().getUsername()), null
         );
@@ -64,9 +68,11 @@ public class PasswordListController implements NativeKeyListener {
      * copy the password to the clipboard
      */
     public void getPassword() {
-        TableView<Password>  tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
+        TableView<Password> tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
+        AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
+        textEncryptor.setPassword(loginPageController.masterPassword.getText());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-                new StringSelection(tableView.getSelectionModel().getSelectedItem().getPassword()), null
+                new StringSelection(textEncryptor.decrypt(db.getPassword(tableView.getSelectionModel().getSelectedItem().getUsername(), accordion.getExpandedPane().getText()).getPassword())), null
         );
     }
 
@@ -101,13 +107,11 @@ public class PasswordListController implements NativeKeyListener {
         tableView.setContextMenu(createContextMenu());
 
         ObservableList<Password> data = FXCollections.observableArrayList();
-        list.forEach((s, s2) -> data.add(new Password(s, s2)));
+        list.forEach((s, s2) -> data.add(new Password(s, "********")));
 
         tableView.setItems(data);
 
-        TitledPane pane = new TitledPane(label, tableView);
-
-        return pane;
+        return new TitledPane(label, tableView);
     }
 
     /**
@@ -116,6 +120,7 @@ public class PasswordListController implements NativeKeyListener {
      * @param masterPassword master password to decrypt the password list
      */
     public void loadTable(String masterPassword) {
+        accordion.getPanes().removeAll(accordion.getPanes());
         Map<String, Map<String, String>> hashMap = FileCrypt.getListDB(masterPassword, db);
         hashMap.forEach((s, stringStringMap) -> {
             String[] names = s.split(":");
@@ -157,10 +162,21 @@ public class PasswordListController implements NativeKeyListener {
      *
      * @throws FileNotFoundException password list not found
      */
-    public void onAddPressed() throws FileNotFoundException {
-        FileCrypt.addPwToDatabase(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText(), getActiveWindow(), db);
-        nameField.setText("");
-        loadTable(loginPageController.masterPassword.getText());
+    public void onAddPressed() throws IOException {
+
+        //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("addEntryDialog.fxml"));
+        FXMLLoader fxmlLoader = loadFXML("addEntryDialog");
+        Parent parent = fxmlLoader.load();
+        AddEntryDialogController dialogController = fxmlLoader.getController();
+        dialogController.setPasswordListController(this);
+        dialogController.setDb(db);
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.showAndWait();
+//        FileCrypt.addPwToDatabase(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText(), getActiveWindow(), db);
+//        loadTable(loginPageController.masterPassword.getText());
     }
 
     /**
@@ -203,7 +219,7 @@ public class PasswordListController implements NativeKeyListener {
             System.out.println("Paste password");
             String activeWindow = getActiveWindow();
 
-            Password password = db.getPassword(activeWindow).getPasswords().get(0); //TODO: selection model for Passwords needed
+            Password password = db.getPasswords(activeWindow).getPasswords().get(0); //TODO: selection model for Passwords needed
             System.out.println(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
 
             sendKeys(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
@@ -219,7 +235,7 @@ public class PasswordListController implements NativeKeyListener {
         }
     }
 
-    private String getActiveWindow() {
+    public String getActiveWindow() {
         //only Windows
         char[] buffer = new char[MAX_TITLE_LENGTH * 2];
         WinDef.HWND hwnd = User32.INSTANCE.GetForegroundWindow();
@@ -231,6 +247,10 @@ public class PasswordListController implements NativeKeyListener {
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
 
+    }
+
+    private static FXMLLoader loadFXML(String fxml) {
+        return new FXMLLoader(AddEntryDialogController.class.getResource("/" + fxml + ".fxml"));
     }
 
 

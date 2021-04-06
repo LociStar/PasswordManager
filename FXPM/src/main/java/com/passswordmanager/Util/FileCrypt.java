@@ -87,13 +87,13 @@ public abstract class FileCrypt {
      * @param db             DatabaseConnectionHandler
      * @return true if success
      */
-    public static boolean addPwToDatabase(String name, String password, String masterPassword, String programName, DatabaseConnectionHandler db) {
+    public static boolean addPwToDatabase(String name, String password, String masterPassword, String programName, String nickname,DatabaseConnectionHandler db) {
         try {
 
             AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
             aes256TextEncryptor.setPassword(masterPassword);
 
-            db.insert(name, aes256TextEncryptor.encrypt(password), programName, "");
+            db.insert(name, aes256TextEncryptor.encrypt(password), programName, nickname);
             return true;
 
         } catch (Exception e) {

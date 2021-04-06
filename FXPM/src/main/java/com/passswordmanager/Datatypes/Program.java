@@ -12,8 +12,15 @@ public class Program {
     private String nickname;
     private List<Password> passwords;
 
+    public Program(String title, String nickname, List<Password> passwords) {
+        this.title = title;
+        this.nickname = nickname;
+        this.passwords = passwords;
+    }
+
     public Program(String title, List<Password> passwords) {
         this.title = title;
+        this.nickname = "";
         this.passwords = passwords;
     }
 
@@ -41,5 +48,13 @@ public class Program {
 
     public void setPasswords(List<Password> passwords) {
         this.passwords = passwords;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }
