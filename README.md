@@ -1,8 +1,15 @@
 # PasswordManager
 
-Java-Version: 1.8
+Java-Version: 16
 
-Use StartInBackground.java to start the entry.
+**Start PM:**<br />
+Executing StartInBackgroud.java without adding JavaFX moduls and path, will not start PM.
+
+PM is configured with maven:
+FXPM is the working directory for maven.
+To start the PM use maven-command "javafx:run -X -f pom.xml" in FXPM
+<br /><br />
+**Informations:**<br />
 The default password is "test".
 
 To automatically write a password to the according entry, press STRG+ALT+A.
