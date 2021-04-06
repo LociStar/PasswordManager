@@ -2,10 +2,6 @@ package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Util.FileCrypt;
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -14,7 +10,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class AddEntryDialogController {
-    private static final int MAX_TITLE_LENGTH = 1024;
     @FXML
     private TextField pName;
 
