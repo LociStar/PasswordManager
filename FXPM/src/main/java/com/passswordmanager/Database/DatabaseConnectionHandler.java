@@ -1,7 +1,7 @@
 package com.passswordmanager.Database;
 
 import com.passswordmanager.Datatypes.Password;
-import com.passswordmanager.Datatypes.Program;
+import com.passswordmanager.Datatypes.Entry;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -137,8 +137,8 @@ public class DatabaseConnectionHandler {
     }
 
     public Password getPassword(String username, String nickname) {
-        Program program = new Program();
-        program.setNickname(nickname);
+        Entry entry = new Entry();
+        entry.setNickname(nickname);
         Password password = new Password(username, "");
         try {
             System.out.println(nickname);
@@ -146,9 +146,9 @@ public class DatabaseConnectionHandler {
             ResultSet resultSet = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nickname + "';");
             while (resultSet.next()) {
                 //add Passwords to List
-                program.setTitle(resultSet.getString("name"));
+                entry.setTitle(resultSet.getString("name"));
             }
-            ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE pName='" + program.getTitle() + "';");
+            ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE pName='" + entry.getTitle() + "';");
             while (rs.next()) {
                 //add Passwords to List
                 password = new Password(username, rs.getString("pw"));
@@ -159,7 +159,7 @@ public class DatabaseConnectionHandler {
         return password;
     }
 
-    public Program getPasswords(String pName) {
+    public Entry getPasswords(String pName) {
         List<Password> passwords = new ArrayList<>();
         try {
             ResultSet rs = st.executeQuery("SELECT username, pw FROM Password WHERE pName='" + pName + "';");
@@ -170,6 +170,6 @@ public class DatabaseConnectionHandler {
         } catch (SQLException sqlException) {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
         }
-        return new Program(pName, passwords);
+        return new Entry(pName, passwords);
     }
 }

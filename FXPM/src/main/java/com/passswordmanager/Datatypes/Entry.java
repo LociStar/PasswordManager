@@ -6,30 +6,30 @@ import java.util.List;
 /**
  * Representation of a program
  */
-public class Program {
+public class Entry {
 
     private String title;
     private String nickname;
     private List<Password> passwords;
 
-    public Program(String title, String nickname, List<Password> passwords) {
+    public Entry(String title, String nickname, List<Password> passwords) {
         this.title = title;
         this.nickname = nickname;
         this.passwords = passwords;
     }
 
-    public Program(String title, List<Password> passwords) {
+    public Entry(String title, List<Password> passwords) {
         this.title = title;
         this.nickname = "";
         this.passwords = passwords;
     }
 
-    public Program(String title) {
+    public Entry(String title) {
         this.title = title;
         this.passwords = new ArrayList<Password>();
     }
 
-    public Program() {
+    public Entry() {
         this.title = "";
         this.passwords = new ArrayList<Password>();
     }

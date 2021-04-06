@@ -2,7 +2,7 @@ package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.Password;
-import com.passswordmanager.Datatypes.Program;
+import com.passswordmanager.Datatypes.Entry;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
 import com.sun.jna.Native;
@@ -220,11 +220,11 @@ public class PasswordListController implements NativeKeyListener {
             System.out.println("Paste password");
             String activeWindow = getActiveWindow();
 
-            Program program = db.getPasswords(activeWindow);
+            Entry entry = db.getPasswords(activeWindow);
             //no match found
-            if (program.getPasswords().size() == 0) return;
+            if (entry.getPasswords().size() == 0) return;
 
-            Password password = program.getPasswords().get(0); //TODO: selection model for Passwords needed
+            Password password = entry.getPasswords().get(0); //TODO: selection model for Passwords needed
             System.out.println(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
 
             sendKeys(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
