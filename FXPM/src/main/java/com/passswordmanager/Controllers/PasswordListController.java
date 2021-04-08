@@ -210,6 +210,7 @@ public class PasswordListController implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
+        //STRG+ALT+A  -> write Username + ENTER + Password
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_A) {
@@ -217,7 +218,6 @@ public class PasswordListController implements NativeKeyListener {
                 System.out.println("PasswordManager is Locked");
                 return;
             }
-            System.out.println("Paste password");
             String activeWindow = getActiveWindow();
 
             Entry entry = db.getPasswords(activeWindow);
@@ -225,7 +225,26 @@ public class PasswordListController implements NativeKeyListener {
             if (entry.getPasswords().size() == 0) return;
 
             Password password = entry.getPasswords().get(0); //TODO: selection model for Passwords needed
-            System.out.println(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
+
+            sendKeys(password.getUsername());
+            sendKeys("\n");
+            sendKeys(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
+        }
+        //STRG+ALT+Y  -> write Password
+        if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
+                && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
+                && e.getKeyCode() == NativeKeyEvent.VC_Y) {
+            if (loginPageController.masterPassword.getText().equals("")) {
+                System.out.println("PasswordManager is Locked");
+                return;
+            }
+            String activeWindow = getActiveWindow();
+
+            Entry entry = db.getPasswords(activeWindow);
+            //no match found
+            if (entry.getPasswords().size() == 0) return;
+
+            Password password = entry.getPasswords().get(0); //TODO: selection model for Passwords needed
 
             sendKeys(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
         }

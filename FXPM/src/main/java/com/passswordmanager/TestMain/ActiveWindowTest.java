@@ -20,7 +20,6 @@ public class ActiveWindowTest {
     public static void main(String[] args) throws Exception {
         System.out.println(getActiveWindow());
 
-
     }
 
     public static String getActiveWindow() {
