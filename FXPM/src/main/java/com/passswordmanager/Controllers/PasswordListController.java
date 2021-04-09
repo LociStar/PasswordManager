@@ -1,27 +1,29 @@
 package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
-import com.passswordmanager.Datatypes.Password;
-import com.passswordmanager.Datatypes.Entry;
+import com.passswordmanager.Datatypes.Account;
+import com.passswordmanager.Datatypes.Program;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
@@ -59,7 +61,7 @@ public class PasswordListController implements NativeKeyListener {
      * copy the name to the clipboard
      */
     public void getName() {
-        TableView<Password> tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
+        TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                 new StringSelection(tableView.getSelectionModel().getSelectedItem().getUsername()), null
         );
@@ -69,7 +71,7 @@ public class PasswordListController implements NativeKeyListener {
      * copy the password to the clipboard
      */
     public void getPassword() {
-        TableView<Password> tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
+        TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
         textEncryptor.setPassword(loginPageController.masterPassword.getText());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
@@ -95,9 +97,9 @@ public class PasswordListController implements NativeKeyListener {
     private TitledPane createTiltedPane(String name, String nickname, Map<String, String> list) {
         String label = nickname.equals("") ? name : nickname;
 
-        TableView<Password> tableView = new TableView<>();
-        TableColumn<Password, String> username = new TableColumn<>("username");
-        TableColumn<Password, String> password = new TableColumn<>("password");
+        TableView<Account> tableView = new TableView<>();
+        TableColumn<Account, String> username = new TableColumn<>("username");
+        TableColumn<Account, String> password = new TableColumn<>("password");
 
         username.setCellValueFactory(new PropertyValueFactory<>("username"));
         password.setCellValueFactory(new PropertyValueFactory<>("password"));
@@ -107,8 +109,8 @@ public class PasswordListController implements NativeKeyListener {
 
         tableView.setContextMenu(createContextMenu());
 
-        ObservableList<Password> data = FXCollections.observableArrayList();
-        list.forEach((s, s2) -> data.add(new Password(s, "********")));
+        ObservableList<Account> data = FXCollections.observableArrayList();
+        list.forEach((s, s2) -> data.add(new Account(s, "********")));
 
         tableView.setItems(data);
 
@@ -166,18 +168,28 @@ public class PasswordListController implements NativeKeyListener {
     public void onAddPressed() throws IOException {
 
         //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("addEntryDialog.fxml"));
+        createAddEntryDialog();
+//        FileCrypt.addPwToDatabase(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText(), getActiveWindow(), db);
+//        loadTable(loginPageController.masterPassword.getText());
+    }
+
+    private void createAddEntryDialog(String pName) throws IOException {
         FXMLLoader fxmlLoader = loadFXML("addEntryDialog");
         Parent parent = fxmlLoader.load();
         AddEntryDialogController dialogController = fxmlLoader.getController();
-        dialogController.setPasswordListController(this);
+        dialogController.setLoginPageController(loginPageController);
         dialogController.setDb(db);
+        dialogController.setPNameText(pName);
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
-//        FileCrypt.addPwToDatabase(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText(), getActiveWindow(), db);
-//        loadTable(loginPageController.masterPassword.getText());
+        loadTable(loginPageController.masterPassword.getText());
+    }
+
+    private void createAddEntryDialog() throws IOException {
+        createAddEntryDialog("");
     }
 
     /**
@@ -210,31 +222,116 @@ public class PasswordListController implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
+        if (STRG_ALT_A(e)) return;
+        if (STRG_ALT_Y(e)) return;
+        STRG_ALT_X(e);
+    }
+
+    private void STRG_ALT_X(NativeKeyEvent e) {
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
-                && e.getKeyCode() == NativeKeyEvent.VC_A) {
+                && e.getKeyCode() == NativeKeyEvent.VC_X) {
             if (loginPageController.masterPassword.getText().equals("")) {
                 System.out.println("PasswordManager is Locked");
                 return;
             }
-            System.out.println("Paste password");
             String activeWindow = getActiveWindow();
 
-            Entry entry = db.getPasswords(activeWindow);
-            //no match found
-            if (entry.getPasswords().size() == 0) return;
-
-            Password password = entry.getPasswords().get(0); //TODO: selection model for Passwords needed
-            System.out.println(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
-
-            sendKeys(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
+            Platform.runLater(() -> {
+                try {
+                    createAddEntryDialog(activeWindow);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            });
         }
+    }
+
+    private boolean STRG_ALT_Y(NativeKeyEvent e) {
+        //STRG+ALT+Y  -> write Password
+        if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
+                && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
+                && e.getKeyCode() == NativeKeyEvent.VC_Y) {
+            if (loginPageController.masterPassword.getText().equals("")) {
+                System.out.println("PasswordManager is Locked");
+                return true;
+            }
+            String activeWindow = getActiveWindow();
+
+            Program program = db.getPasswords(activeWindow);
+            //no match found
+            if (program.getPasswords().size() == 0) return true;
+            else if (program.getPasswords().size() > 1) {
+                Platform.runLater(() -> startSelectionDialog(program, true));
+                return true;
+            }
+
+            Account account = program.getPasswords().get(0);
+
+            sendKeys(FileCrypt.decryptText(account.getPassword(), loginPageController.masterPassword.getText()));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean STRG_ALT_A(NativeKeyEvent e) {
+        //STRG+ALT+A  -> write Username + TAB + Password
+        if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
+                && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
+                && e.getKeyCode() == NativeKeyEvent.VC_A) {
+            e.setKeyCode(0);
+            if (loginPageController.masterPassword.getText().equals("")) {
+                System.out.println("PasswordManager is Locked");
+                return true;
+            }
+            String activeWindow = getActiveWindow();
+            Program program = db.getPasswords(activeWindow);
+            //no match found
+            if (program.getPasswords().size() == 0) return true;
+            else if (program.getPasswords().size() > 1) {
+                Platform.runLater(() -> startSelectionDialog(program, false));
+                return true;
+            }
+
+
+            Account account = program.getPasswords().get(0);
+
+            sendKeys(account.getUsername());
+            sendKeys("\t");
+            sendKeys(FileCrypt.decryptText(account.getPassword(), loginPageController.masterPassword.getText()));
+            return true;
+        }
+        return false;
+    }
+
+    private void startSelectionDialog(Program program, boolean onlyPassword) {
+        FXMLLoader fxmlLoader = loadFXML("userSelectionDialog");
+        Parent parent = null;
+        try {
+            parent = fxmlLoader.load();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        assert parent != null;
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        UserSelectionDialogController userSelectionDialogController = fxmlLoader.getController();
+        userSelectionDialogController.setEntry(program);
+        userSelectionDialogController.loadTable();
+        userSelectionDialogController.setLoginPageController(loginPageController);
+        userSelectionDialogController.setOnlyPassword(onlyPassword);
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setAlwaysOnTop(true);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
     void sendKeys(String keys) {
         try {
             Keyboard keyboard = new Keyboard();
             keyboard.type(keys);
+            keyboard.release(keys);
         } catch (AWTException | InterruptedException awtException) {
             awtException.printStackTrace();
         }

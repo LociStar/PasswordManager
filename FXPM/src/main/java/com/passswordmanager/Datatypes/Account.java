@@ -3,15 +3,15 @@ package com.passswordmanager.Datatypes;
 /**
  * Representation of a password
  */
-public class Password {
+public class Account {
     private String username;
     private String password;
 
-    public Password() {
-        new Password("", "");
+    public Account() {
+        new Account("", "");
     }
 
-    public Password(String username, String password) {
+    public Account(String username, String password) {
         this.username = username;
         this.password = password;
     }

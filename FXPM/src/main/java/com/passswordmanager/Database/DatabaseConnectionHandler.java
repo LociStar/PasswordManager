@@ -1,7 +1,7 @@
 package com.passswordmanager.Database;
 
-import com.passswordmanager.Datatypes.Password;
-import com.passswordmanager.Datatypes.Entry;
+import com.passswordmanager.Datatypes.Account;
+import com.passswordmanager.Datatypes.Program;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -136,40 +136,40 @@ public class DatabaseConnectionHandler {
         return new HashMap<>();
     }
 
-    public Password getPassword(String username, String nickname) {
-        Entry entry = new Entry();
-        entry.setNickname(nickname);
-        Password password = new Password(username, "");
+    public Account getPassword(String username, String nickname) {
+        Program program = new Program();
+        program.setNickname(nickname);
+        Account account = new Account(username, "");
         try {
             System.out.println(nickname);
             System.out.println(username);
             ResultSet resultSet = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nickname + "';");
             while (resultSet.next()) {
                 //add Passwords to List
-                entry.setTitle(resultSet.getString("name"));
+                program.setTitle(resultSet.getString("name"));
             }
-            ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE pName='" + entry.getTitle() + "';");
+            ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE pName='" + program.getTitle() + "';");
             while (rs.next()) {
                 //add Passwords to List
-                password = new Password(username, rs.getString("pw"));
+                account = new Account(username, rs.getString("pw"));
             }
         } catch (SQLException sqlException) {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
         }
-        return password;
+        return account;
     }
 
-    public Entry getPasswords(String pName) {
-        List<Password> passwords = new ArrayList<>();
+    public Program getPasswords(String pName) {
+        List<Account> accounts = new ArrayList<>();
         try {
             ResultSet rs = st.executeQuery("SELECT username, pw FROM Password WHERE pName='" + pName + "';");
             while (rs.next()) {
                 //add Passwords to List
-                passwords.add(new Password(rs.getString("username"), rs.getString("pw")));
+                accounts.add(new Account(rs.getString("username"), rs.getString("pw")));
             }
         } catch (SQLException sqlException) {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
         }
-        return new Entry(pName, passwords);
+        return new Program(pName, accounts);
     }
 }
