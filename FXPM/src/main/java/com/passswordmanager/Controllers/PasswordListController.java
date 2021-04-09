@@ -231,7 +231,7 @@ public class PasswordListController implements NativeKeyListener {
             }
 
 
-            Password password = entry.getPasswords().get(0); //TODO: selection model for Passwords needed
+            Password password = entry.getPasswords().get(0);
 
             sendKeys(password.getUsername());
             sendKeys("\t");
