@@ -1,7 +1,7 @@
 package com.passswordmanager.Controllers;
 
-import com.passswordmanager.Datatypes.Entry;
-import com.passswordmanager.Datatypes.Password;
+import com.passswordmanager.Datatypes.Account;
+import com.passswordmanager.Datatypes.Program;
 import com.passswordmanager.Util.Keyboard;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
@@ -20,26 +20,26 @@ import java.util.List;
 
 public class UserSelectionDialogController {
     @FXML
-    public TableView<Password> table;
+    public TableView<Account> table;
 
-    private Entry entry;
+    private Program program;
 
     private LoginPageController loginPageController;
 
     private boolean onlyPassword = false;
 
     public void loadTable() {
-        addListToTable(entry.getPasswords());
+        addListToTable(program.getPasswords());
     }
 
-    public void setEntry(Entry entry) {
-        this.entry = entry;
+    public void setEntry(Program program) {
+        this.program = program;
     }
 
-    private void addListToTable(List<Password> passwordList) {
+    private void addListToTable(List<Account> accountList) {
         table.getColumns().removeAll(table.getColumns());
-        TableColumn<Password, String> username = new TableColumn<>("username");
-        TableColumn<Password, String> password = new TableColumn<>("password");
+        TableColumn<Account, String> username = new TableColumn<>("username");
+        TableColumn<Account, String> password = new TableColumn<>("password");
 
         username.setCellValueFactory(new PropertyValueFactory<>("username"));
         password.setCellValueFactory(new PropertyValueFactory<>("password"));
@@ -47,7 +47,7 @@ public class UserSelectionDialogController {
         table.getColumns().add(username);
         table.getColumns().add(password);
 
-        table.setItems(FXCollections.observableArrayList(passwordList));
+        table.setItems(FXCollections.observableArrayList(accountList));
         table.getSelectionModel().select(0);
     }
 

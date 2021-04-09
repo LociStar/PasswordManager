@@ -6,32 +6,32 @@ import java.util.List;
 /**
  * Representation of a program
  */
-public class Entry {
+public class Program {
 
     private String title;
     private String nickname;
-    private List<Password> passwords;
+    private List<Account> accounts;
 
-    public Entry(String title, String nickname, List<Password> passwords) {
+    public Program(String title, String nickname, List<Account> accounts) {
         this.title = title;
         this.nickname = nickname;
-        this.passwords = passwords;
+        this.accounts = accounts;
     }
 
-    public Entry(String title, List<Password> passwords) {
+    public Program(String title, List<Account> accounts) {
         this.title = title;
         this.nickname = "";
-        this.passwords = passwords;
+        this.accounts = accounts;
     }
 
-    public Entry(String title) {
+    public Program(String title) {
         this.title = title;
-        this.passwords = new ArrayList<Password>();
+        this.accounts = new ArrayList<Account>();
     }
 
-    public Entry() {
+    public Program() {
         this.title = "";
-        this.passwords = new ArrayList<Password>();
+        this.accounts = new ArrayList<Account>();
     }
 
     public String getTitle() {
@@ -42,12 +42,12 @@ public class Entry {
         this.title = title;
     }
 
-    public List<Password> getPasswords() {
-        return passwords;
+    public List<Account> getPasswords() {
+        return accounts;
     }
 
-    public void setPasswords(List<Password> passwords) {
-        this.passwords = passwords;
+    public void setPasswords(List<Account> accounts) {
+        this.accounts = accounts;
     }
 
     public String getNickname() {

@@ -1,8 +1,8 @@
 package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
-import com.passswordmanager.Datatypes.Entry;
-import com.passswordmanager.Datatypes.Password;
+import com.passswordmanager.Datatypes.Account;
+import com.passswordmanager.Datatypes.Program;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
 import com.sun.jna.Native;
@@ -61,7 +61,7 @@ public class PasswordListController implements NativeKeyListener {
      * copy the name to the clipboard
      */
     public void getName() {
-        TableView<Password> tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
+        TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                 new StringSelection(tableView.getSelectionModel().getSelectedItem().getUsername()), null
         );
@@ -71,7 +71,7 @@ public class PasswordListController implements NativeKeyListener {
      * copy the password to the clipboard
      */
     public void getPassword() {
-        TableView<Password> tableView = (TableView<Password>) accordion.getExpandedPane().getContent();
+        TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
         textEncryptor.setPassword(loginPageController.masterPassword.getText());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
@@ -97,9 +97,9 @@ public class PasswordListController implements NativeKeyListener {
     private TitledPane createTiltedPane(String name, String nickname, Map<String, String> list) {
         String label = nickname.equals("") ? name : nickname;
 
-        TableView<Password> tableView = new TableView<>();
-        TableColumn<Password, String> username = new TableColumn<>("username");
-        TableColumn<Password, String> password = new TableColumn<>("password");
+        TableView<Account> tableView = new TableView<>();
+        TableColumn<Account, String> username = new TableColumn<>("username");
+        TableColumn<Account, String> password = new TableColumn<>("password");
 
         username.setCellValueFactory(new PropertyValueFactory<>("username"));
         password.setCellValueFactory(new PropertyValueFactory<>("password"));
@@ -109,8 +109,8 @@ public class PasswordListController implements NativeKeyListener {
 
         tableView.setContextMenu(createContextMenu());
 
-        ObservableList<Password> data = FXCollections.observableArrayList();
-        list.forEach((s, s2) -> data.add(new Password(s, "********")));
+        ObservableList<Account> data = FXCollections.observableArrayList();
+        list.forEach((s, s2) -> data.add(new Account(s, "********")));
 
         tableView.setItems(data);
 
@@ -222,20 +222,20 @@ public class PasswordListController implements NativeKeyListener {
             }
             String activeWindow = getActiveWindow();
 
-            Entry entry = db.getPasswords(activeWindow);
+            Program program = db.getPasswords(activeWindow);
             //no match found
-            if (entry.getPasswords().size() == 0) return;
-            else if (entry.getPasswords().size() > 1) {
-                Platform.runLater(() -> startSelectionDialog(entry, false));
+            if (program.getPasswords().size() == 0) return;
+            else if (program.getPasswords().size() > 1) {
+                Platform.runLater(() -> startSelectionDialog(program, false));
                 return;
             }
 
 
-            Password password = entry.getPasswords().get(0);
+            Account account = program.getPasswords().get(0);
 
-            sendKeys(password.getUsername());
+            sendKeys(account.getUsername());
             sendKeys("\t");
-            sendKeys(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
+            sendKeys(FileCrypt.decryptText(account.getPassword(), loginPageController.masterPassword.getText()));
         }
         //STRG+ALT+Y  -> write Password
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
@@ -247,21 +247,21 @@ public class PasswordListController implements NativeKeyListener {
             }
             String activeWindow = getActiveWindow();
 
-            Entry entry = db.getPasswords(activeWindow);
+            Program program = db.getPasswords(activeWindow);
             //no match found
-            if (entry.getPasswords().size() == 0) return;
-            else if (entry.getPasswords().size() > 1) {
-                Platform.runLater(() -> startSelectionDialog(entry, true));
+            if (program.getPasswords().size() == 0) return;
+            else if (program.getPasswords().size() > 1) {
+                Platform.runLater(() -> startSelectionDialog(program, true));
                 return;
             }
 
-            Password password = entry.getPasswords().get(0); //TODO: selection model for Passwords needed
+            Account account = program.getPasswords().get(0);
 
-            sendKeys(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
+            sendKeys(FileCrypt.decryptText(account.getPassword(), loginPageController.masterPassword.getText()));
         }
     }
 
-    private void startSelectionDialog(Entry entry, boolean onlyPassword) {
+    private void startSelectionDialog(Program program, boolean onlyPassword) {
         FXMLLoader fxmlLoader = loadFXML("userSelectionDialog");
         Parent parent = null;
         try {
@@ -273,7 +273,7 @@ public class PasswordListController implements NativeKeyListener {
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         UserSelectionDialogController userSelectionDialogController = fxmlLoader.getController();
-        userSelectionDialogController.setEntry(entry);
+        userSelectionDialogController.setEntry(program);
         userSelectionDialogController.loadTable();
         userSelectionDialogController.setLoginPageController(loginPageController);
         userSelectionDialogController.setOnlyPassword(onlyPassword);
