@@ -26,6 +26,8 @@ public class UserSelectionDialogController {
 
     private LoginPageController loginPageController;
 
+    private boolean onlyPassword = false;
+
     public void loadTable() {
         addListToTable(entry.getPasswords());
     }
@@ -77,8 +79,10 @@ public class UserSelectionDialogController {
             closeStage(keyEvent);
             AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
             textEncryptor.setPassword(loginPageController.masterPassword.getText());
-            sendKeys(table.getSelectionModel().getSelectedItem().getUsername());
-            sendKeys("\t");
+            if (!onlyPassword){
+                sendKeys(table.getSelectionModel().getSelectedItem().getUsername());
+                sendKeys("\t");
+            }
             sendKeys(textEncryptor.decrypt(table.getSelectionModel().getSelectedItem().getPassword()));
             //closeStage(keyEvent);
         }
@@ -86,5 +90,9 @@ public class UserSelectionDialogController {
 
     public void setLoginPageController(LoginPageController loginPageController) {
         this.loginPageController = loginPageController;
+    }
+
+    public void setOnlyPassword(boolean onlyPassword) {
+        this.onlyPassword = onlyPassword;
     }
 }

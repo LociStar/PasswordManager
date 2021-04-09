@@ -226,7 +226,7 @@ public class PasswordListController implements NativeKeyListener {
             //no match found
             if (entry.getPasswords().size() == 0) return;
             else if (entry.getPasswords().size() > 1) {
-                Platform.runLater(() -> startSelectionDialog(entry));
+                Platform.runLater(() -> startSelectionDialog(entry, false));
                 return;
             }
 
@@ -250,6 +250,10 @@ public class PasswordListController implements NativeKeyListener {
             Entry entry = db.getPasswords(activeWindow);
             //no match found
             if (entry.getPasswords().size() == 0) return;
+            else if (entry.getPasswords().size() > 1) {
+                Platform.runLater(() -> startSelectionDialog(entry, true));
+                return;
+            }
 
             Password password = entry.getPasswords().get(0); //TODO: selection model for Passwords needed
 
@@ -257,7 +261,7 @@ public class PasswordListController implements NativeKeyListener {
         }
     }
 
-    private void startSelectionDialog(Entry entry) {
+    private void startSelectionDialog(Entry entry, boolean onlyPassword) {
         FXMLLoader fxmlLoader = loadFXML("userSelectionDialog");
         Parent parent = null;
         try {
@@ -272,6 +276,7 @@ public class PasswordListController implements NativeKeyListener {
         userSelectionDialogController.setEntry(entry);
         userSelectionDialogController.loadTable();
         userSelectionDialogController.setLoginPageController(loginPageController);
+        userSelectionDialogController.setOnlyPassword(onlyPassword);
         stage.initStyle(StageStyle.UNDECORATED);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setAlwaysOnTop(true);
