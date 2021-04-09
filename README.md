@@ -1,11 +1,21 @@
 # PasswordManager
 
-Java-Version: 1.8
+Java-Version: 16 <br />
+Language Level: 14
 
-Use StartInBackground.java to start the program.
-The default account is "test".
+**Start PM:**<br />
+Executing StartInBackgroud.java without adding JavaFX moduls and path, will not start PM.
 
-To automatically write a account to the according program, press STRG+ALT+A.
+PM is configured with maven:
+FXPM is the working directory for maven.
+To start the PM use maven-command "javafx:run -X -f pom.xml" in FXPM
+<br /><br />
+**Informations:**<br />
+The default password is "test".
+
+To automatically write username + TAB + password to the according program, press STRG+ALT+A.<br />
+To only write the password, press STRG+ALT+Y.
+To create a new entry press STRG+ALT+X
 
 To change the account, start GenerateMPHash.java to generate a new hashed account and replace the String "hash" at Controllers.LoginPageController.java with the new generated hash.
 
