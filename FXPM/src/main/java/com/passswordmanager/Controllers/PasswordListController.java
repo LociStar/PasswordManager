@@ -1,27 +1,29 @@
 package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
-import com.passswordmanager.Datatypes.Password;
 import com.passswordmanager.Datatypes.Entry;
+import com.passswordmanager.Datatypes.Password;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
@@ -210,7 +212,7 @@ public class PasswordListController implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        //STRG+ALT+A  -> write Username + ENTER + Password
+        //STRG+ALT+A  -> write Username + TAB + Password
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_A) {
@@ -223,11 +225,16 @@ public class PasswordListController implements NativeKeyListener {
             Entry entry = db.getPasswords(activeWindow);
             //no match found
             if (entry.getPasswords().size() == 0) return;
+            else if (entry.getPasswords().size() > 1) {
+                Platform.runLater(() -> startSelectionDialog(entry));
+                return;
+            }
+
 
             Password password = entry.getPasswords().get(0); //TODO: selection model for Passwords needed
 
             sendKeys(password.getUsername());
-            sendKeys("\n");
+            sendKeys("\t");
             sendKeys(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
         }
         //STRG+ALT+Y  -> write Password
@@ -248,6 +255,28 @@ public class PasswordListController implements NativeKeyListener {
 
             sendKeys(FileCrypt.decryptText(password.getPassword(), loginPageController.masterPassword.getText()));
         }
+    }
+
+    private void startSelectionDialog(Entry entry) {
+        FXMLLoader fxmlLoader = loadFXML("userSelectionDialog");
+        Parent parent = null;
+        try {
+            parent = fxmlLoader.load();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        assert parent != null;
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        UserSelectionDialogController userSelectionDialogController = fxmlLoader.getController();
+        userSelectionDialogController.setEntry(entry);
+        userSelectionDialogController.loadTable();
+        userSelectionDialogController.setLoginPageController(loginPageController);
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setAlwaysOnTop(true);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
     void sendKeys(String keys) {

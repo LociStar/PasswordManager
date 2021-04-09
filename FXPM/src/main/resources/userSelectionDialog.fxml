@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="327.0" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.passswordmanager.Controllers.UserSelectionDialogController">
+   <children>
+      <TableView fx:id="table" onKeyReleased="#onKeyReleased" VBox.vgrow="ALWAYS">
+         <columns>
+            <TableColumn prefWidth="75.0" text="Username" />
+            <TableColumn prefWidth="75.0" text="Password" />
+         </columns>
+      </TableView>
+   </children>
+</VBox>
