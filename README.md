@@ -13,7 +13,8 @@ To start the PM use maven-command "javafx:run -X -f pom.xml" in FXPM
 **Informations:**<br />
 The default password is "test".
 
-To automatically write a password to the according entry, press STRG+ALT+A.
+To automatically write username + TAB + password to the according program, press STRG+ALT+A.<br />
+To only write the password, press STRG+ALT+Y.
 
 To change the password, start GenerateMPHash.java to generate a new hashed password and replace the String "hash" at Controllers.LoginPageController.java with the new generated hash.
 
