@@ -22,15 +22,14 @@ public class AddEntryDialogController {
     @FXML
     private PasswordField password;
 
-    private PasswordListController passwordListController;
+    private LoginPageController loginPageController;
 
     private DatabaseConnectionHandler db;
 
     @FXML
     void btnAddClicked(ActionEvent event) {
-        System.out.println(passwordListController.getLoginPageController().masterPassword.getText());
-        FileCrypt.addPwToDatabase(username.getText(), password.getText(), passwordListController.getLoginPageController().masterPassword.getText(), pName.getText(), nickname.getText(), db);
-        passwordListController.loadTable(passwordListController.getLoginPageController().masterPassword.getText());
+        System.out.println(loginPageController.masterPassword.getText());
+        FileCrypt.addPwToDatabase(username.getText(), password.getText(), loginPageController.masterPassword.getText(), pName.getText(), nickname.getText(), db);
 
         closeStage(event);
     }
@@ -41,10 +40,6 @@ public class AddEntryDialogController {
         stage.close();
     }
 
-    public void setPasswordListController(PasswordListController passwordListController) {
-        this.passwordListController = passwordListController;
-    }
-
     public void setDb(DatabaseConnectionHandler db) {
         this.db = db;
     }
@@ -52,6 +47,14 @@ public class AddEntryDialogController {
     @FXML
     public void onRandomPressed() {
         password.setText(FileCrypt.generatePassword());
+    }
+
+    public void setPNameText(String pName){
+        this.pName.setText(pName);
+    }
+
+    public void setLoginPageController(LoginPageController loginPageController) {
+        this.loginPageController = loginPageController;
     }
 }
 

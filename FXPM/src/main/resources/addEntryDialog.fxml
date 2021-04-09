@@ -39,7 +39,7 @@
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
                <children>
                   <Label alignment="CENTER_RIGHT" minWidth="120.0" prefHeight="17.0" prefWidth="120.0" text="Password" />
-                  <PasswordField fx:id="account" HBox.hgrow="ALWAYS" />
+                  <PasswordField fx:id="password" HBox.hgrow="ALWAYS" />
                   <Button minWidth="62.0" mnemonicParsing="false" onAction="#onRandomPressed" text="Random" />
                </children>
                <padding>

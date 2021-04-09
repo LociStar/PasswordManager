@@ -168,18 +168,28 @@ public class PasswordListController implements NativeKeyListener {
     public void onAddPressed() throws IOException {
 
         //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("addEntryDialog.fxml"));
+        createAddEntryDialog();
+//        FileCrypt.addPwToDatabase(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText(), getActiveWindow(), db);
+//        loadTable(loginPageController.masterPassword.getText());
+    }
+
+    private void createAddEntryDialog(String pName) throws IOException {
         FXMLLoader fxmlLoader = loadFXML("addEntryDialog");
         Parent parent = fxmlLoader.load();
         AddEntryDialogController dialogController = fxmlLoader.getController();
-        dialogController.setPasswordListController(this);
+        dialogController.setLoginPageController(loginPageController);
         dialogController.setDb(db);
+        dialogController.setPNameText(pName);
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
-//        FileCrypt.addPwToDatabase(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText(), getActiveWindow(), db);
-//        loadTable(loginPageController.masterPassword.getText());
+        loadTable(loginPageController.masterPassword.getText());
+    }
+
+    private void createAddEntryDialog() throws IOException {
+        createAddEntryDialog("");
     }
 
     /**
@@ -212,22 +222,75 @@ public class PasswordListController implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        //STRG+ALT+A  -> write Username + TAB + Password
+        if (STRG_ALT_A(e)) return;
+        if (STRG_ALT_Y(e)) return;
+        STRG_ALT_X(e);
+    }
+
+    private void STRG_ALT_X(NativeKeyEvent e) {
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
-                && e.getKeyCode() == NativeKeyEvent.VC_A) {
+                && e.getKeyCode() == NativeKeyEvent.VC_X) {
             if (loginPageController.masterPassword.getText().equals("")) {
                 System.out.println("PasswordManager is Locked");
                 return;
             }
             String activeWindow = getActiveWindow();
 
+            Platform.runLater(() -> {
+                try {
+                    createAddEntryDialog(activeWindow);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            });
+        }
+    }
+
+    private boolean STRG_ALT_Y(NativeKeyEvent e) {
+        //STRG+ALT+Y  -> write Password
+        if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
+                && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
+                && e.getKeyCode() == NativeKeyEvent.VC_Y) {
+            if (loginPageController.masterPassword.getText().equals("")) {
+                System.out.println("PasswordManager is Locked");
+                return true;
+            }
+            String activeWindow = getActiveWindow();
+
             Program program = db.getPasswords(activeWindow);
             //no match found
-            if (program.getPasswords().size() == 0) return;
+            if (program.getPasswords().size() == 0) return true;
+            else if (program.getPasswords().size() > 1) {
+                Platform.runLater(() -> startSelectionDialog(program, true));
+                return true;
+            }
+
+            Account account = program.getPasswords().get(0);
+
+            sendKeys(FileCrypt.decryptText(account.getPassword(), loginPageController.masterPassword.getText()));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean STRG_ALT_A(NativeKeyEvent e) {
+        //STRG+ALT+A  -> write Username + TAB + Password
+        if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
+                && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
+                && e.getKeyCode() == NativeKeyEvent.VC_A) {
+            e.setKeyCode(0);
+            if (loginPageController.masterPassword.getText().equals("")) {
+                System.out.println("PasswordManager is Locked");
+                return true;
+            }
+            String activeWindow = getActiveWindow();
+            Program program = db.getPasswords(activeWindow);
+            //no match found
+            if (program.getPasswords().size() == 0) return true;
             else if (program.getPasswords().size() > 1) {
                 Platform.runLater(() -> startSelectionDialog(program, false));
-                return;
+                return true;
             }
 
 
@@ -236,29 +299,9 @@ public class PasswordListController implements NativeKeyListener {
             sendKeys(account.getUsername());
             sendKeys("\t");
             sendKeys(FileCrypt.decryptText(account.getPassword(), loginPageController.masterPassword.getText()));
+            return true;
         }
-        //STRG+ALT+Y  -> write Password
-        if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
-                && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
-                && e.getKeyCode() == NativeKeyEvent.VC_Y) {
-            if (loginPageController.masterPassword.getText().equals("")) {
-                System.out.println("PasswordManager is Locked");
-                return;
-            }
-            String activeWindow = getActiveWindow();
-
-            Program program = db.getPasswords(activeWindow);
-            //no match found
-            if (program.getPasswords().size() == 0) return;
-            else if (program.getPasswords().size() > 1) {
-                Platform.runLater(() -> startSelectionDialog(program, true));
-                return;
-            }
-
-            Account account = program.getPasswords().get(0);
-
-            sendKeys(FileCrypt.decryptText(account.getPassword(), loginPageController.masterPassword.getText()));
-        }
+        return false;
     }
 
     private void startSelectionDialog(Program program, boolean onlyPassword) {
@@ -288,6 +331,7 @@ public class PasswordListController implements NativeKeyListener {
         try {
             Keyboard keyboard = new Keyboard();
             keyboard.type(keys);
+            keyboard.release(keys);
         } catch (AWTException | InterruptedException awtException) {
             awtException.printStackTrace();
         }

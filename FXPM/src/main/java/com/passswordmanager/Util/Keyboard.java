@@ -1,7 +1,6 @@
 package com.passswordmanager.Util;
 
-import java.awt.AWTException;
-import java.awt.Robot;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
@@ -29,9 +28,6 @@ public class Keyboard {
 
         //release the "trigger" keys
         Thread.sleep(500);
-        robot.keyRelease(KeyEvent.VK_ALT);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
-        robot.keyRelease(KeyEvent.VK_A);
 
     }
 
