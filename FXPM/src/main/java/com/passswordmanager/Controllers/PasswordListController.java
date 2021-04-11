@@ -4,6 +4,8 @@ import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.Account;
 import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
+import com.passswordmanager.StartInBackground;
+import com.passswordmanager.Util.Config;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
 import com.sun.jna.Native;
@@ -44,7 +46,9 @@ public class PasswordListController implements NativeKeyListener {
     private ContextMenu contextMenu;
     private DatabaseConnectionHandler db;
 
-    private static final int MAX_TITLE_LENGTH = 1024;
+    private final Config config = new Config(StartInBackground.class.getResource("/config.properties").getPath());
+
+    private final int MAX_TITLE_LENGTH = config.getMAX_TITLE_LENGTH();
 
     /**
      * Constructor, creates the context menu for the table view
