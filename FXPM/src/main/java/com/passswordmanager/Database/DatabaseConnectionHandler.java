@@ -61,7 +61,6 @@ public class DatabaseConnectionHandler {
             this.con = DriverManager.getConnection(url, user, passwd);
             this.st = con.createStatement();
         } catch (SQLException ignored) {
-            ignored.printStackTrace();
         }
     }
 

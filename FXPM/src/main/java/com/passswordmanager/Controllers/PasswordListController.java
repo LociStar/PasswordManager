@@ -19,8 +19,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -145,23 +143,12 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     /**
-     * sets the passwordField to a random password
-     */
-    public void onRandomPressed() {
-        passwordField.setText(FileCrypt.generatePassword());
-    }
-
-    /**
      * adds a new password to the passwordField and the password lost file
      *
      * @throws FileNotFoundException password list not found
      */
     public void onAddPressed() throws IOException {
-
-        //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("addEntryDialog.fxml"));
         createAddEntryDialog();
-//        FileCrypt.addPwToDatabase(nameField.getText(), passwordField.getText(), loginPageController.masterPassword.getText(), getActiveWindow(), db);
-//        loadTable(loginPageController.masterPassword.getText());
     }
 
     private void createAddEntryDialog(String pName) throws IOException {
@@ -182,26 +169,6 @@ public class PasswordListController implements NativeKeyListener {
 
     private void createAddEntryDialog() throws IOException {
         createAddEntryDialog("");
-    }
-
-    /**
-     * handles the context menu request
-     *
-     * @param contextMenuEvent ContextMenuEvent
-     */
-    public void onContextMenuRequested(ContextMenuEvent contextMenuEvent) {
-        //contextMenu.show(tableView, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
-    }
-
-    /**
-     * hides the context menu on mouse left click
-     *
-     * @param mouseEvent mouse left click
-     */
-    public void onMouseClicked(MouseEvent mouseEvent) {
-        if (mouseEvent.getSource() instanceof TableView) {
-            contextMenu.hide();
-        }
     }
 
     public void setDb(DatabaseConnectionHandler db) {
