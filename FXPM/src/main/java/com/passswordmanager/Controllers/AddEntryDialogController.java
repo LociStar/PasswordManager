@@ -1,6 +1,7 @@
 package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
+import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Util.FileCrypt;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,14 +23,14 @@ public class AddEntryDialogController {
     @FXML
     private PasswordField password;
 
-    private LoginPageController loginPageController;
+    private MasterPassword masterPassword;
 
     private DatabaseConnectionHandler db;
 
     @FXML
     void btnAddClicked(ActionEvent event) {
-        System.out.println(loginPageController.masterPassword.getText());
-        FileCrypt.addPwToDatabase(username.getText(), password.getText(), loginPageController.masterPassword.getText(), pName.getText(), nickname.getText(), db);
+        FileCrypt.addPwToDatabase(username.getText(), password.getText(), masterPassword.getPassword(), pName.getText(), nickname.getText(), db);
+        masterPassword.clearPasswordCache();
 
         closeStage(event);
     }
@@ -49,12 +50,12 @@ public class AddEntryDialogController {
         password.setText(FileCrypt.generatePassword());
     }
 
-    public void setPNameText(String pName){
+    public void setPNameText(String pName) {
         this.pName.setText(pName);
     }
 
-    public void setLoginPageController(LoginPageController loginPageController) {
-        this.loginPageController = loginPageController;
+    public void setMasterPassword(MasterPassword masterPassword) {
+        this.masterPassword = masterPassword;
     }
 }
 

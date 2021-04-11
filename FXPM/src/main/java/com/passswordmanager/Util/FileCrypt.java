@@ -7,13 +7,18 @@ import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * abstract class to Handle the encryption/ decryption and hashing
  */
 public abstract class FileCrypt {
+
     /**
      * generate a decrypted Map of name-password
      *
@@ -42,10 +47,10 @@ public abstract class FileCrypt {
      * @param db             DatabaseConnectionHandler
      * @return Map(name, password)
      */
-    public static Map<String, Map<String, String>>getListDB(String masterPassword, DatabaseConnectionHandler db) {
+    public static Map<String, Map<String, String>> getListDB(String masterPassword, DatabaseConnectionHandler db) {
         Map<String, String> pNames = db.getProgramNames();
         Map<String, Map<String, String>> hashMap = new HashMap<>();
-        pNames.forEach((s, s2) -> hashMap.put(s+":"+s2, db.getUsrPwNames(s)));
+        pNames.forEach((s, s2) -> hashMap.put(s + ":" + s2, db.getUsrPwNames(s)));
 //        Map<String, String> output = new HashMap<>();
 //        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
 //        aes256TextEncryptor.setPassword(masterPassword);
@@ -67,9 +72,7 @@ public abstract class FileCrypt {
             File file = new File(FileCrypt.class.getResource("/pw.txt").getPath());
             FileOutputStream fw = new FileOutputStream(file, true);
 
-            AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
-            aes256TextEncryptor.setPassword(masterPassword);
-            fw.write((name + " : " + aes256TextEncryptor.encrypt(password) + "\n").getBytes());
+            fw.write((name + " : " + encryptText(password, masterPassword) + "\n").getBytes());
             fw.close();
             return true;
 
@@ -87,13 +90,9 @@ public abstract class FileCrypt {
      * @param db             DatabaseConnectionHandler
      * @return true if success
      */
-    public static boolean addPwToDatabase(String name, String password, String masterPassword, String programName, String nickname,DatabaseConnectionHandler db) {
+    public static boolean addPwToDatabase(String name, String password, String masterPassword, String programName, String nickname, DatabaseConnectionHandler db) {
         try {
-
-            AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
-            aes256TextEncryptor.setPassword(masterPassword);
-
-            db.insert(name, aes256TextEncryptor.encrypt(password), programName, nickname);
+            db.insert(name, encryptText(password, masterPassword), programName, nickname);
             return true;
 
         } catch (Exception e) {

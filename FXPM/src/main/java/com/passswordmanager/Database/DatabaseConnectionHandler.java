@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//
+
 public class DatabaseConnectionHandler {
     private final String url = "jdbc:h2:file:C:/data/passwordManager;mode=MySQL";
     private final String user = "sa";
@@ -61,7 +61,6 @@ public class DatabaseConnectionHandler {
             this.con = DriverManager.getConnection(url, user, passwd);
             this.st = con.createStatement();
         } catch (SQLException ignored) {
-            ignored.printStackTrace();
         }
     }
 
