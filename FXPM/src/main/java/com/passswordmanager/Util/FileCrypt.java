@@ -19,8 +19,6 @@ import java.util.Scanner;
  */
 public abstract class FileCrypt {
 
-    private static char[] passwordChar;
-
     /**
      * generate a decrypted Map of name-password
      *
@@ -74,9 +72,7 @@ public abstract class FileCrypt {
             File file = new File(FileCrypt.class.getResource("/pw.txt").getPath());
             FileOutputStream fw = new FileOutputStream(file, true);
 
-            AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
-            aes256TextEncryptor.setPassword(masterPassword);
-            fw.write((name + " : " + aes256TextEncryptor.encrypt(password) + "\n").getBytes());
+            fw.write((name + " : " + encryptText(password, masterPassword) + "\n").getBytes());
             fw.close();
             return true;
 
@@ -96,11 +92,7 @@ public abstract class FileCrypt {
      */
     public static boolean addPwToDatabase(String name, String password, String masterPassword, String programName, String nickname, DatabaseConnectionHandler db) {
         try {
-
-            AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
-            aes256TextEncryptor.setPassword(masterPassword);
-
-            db.insert(name, aes256TextEncryptor.encrypt(password), programName, nickname);
+            db.insert(name, encryptText(password, masterPassword), programName, nickname);
             return true;
 
         } catch (Exception e) {
