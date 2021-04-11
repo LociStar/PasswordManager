@@ -47,7 +47,6 @@ public class MasterPassword {
      */
     public String getPassword() {
         clearChar(this.password);
-        StringBuilder stringBuilder = new StringBuilder();
         this.guardedString.access(chars -> {
             this.password = new char[chars.length];
             System.arraycopy(chars, 0, this.password, 0, chars.length);
