@@ -2,6 +2,7 @@ package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.Account;
+import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
@@ -16,7 +17,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
@@ -40,10 +40,9 @@ import java.util.Map;
 public class PasswordListController implements NativeKeyListener {
     @FXML
     public PasswordField passwordField;
-    public TextField nameField;
     public Accordion accordion;
 
-    private LoginPageController loginPageController;
+    private MasterPassword masterPassword;
     private ContextMenu contextMenu;
     private DatabaseConnectionHandler db;
 
@@ -73,7 +72,8 @@ public class PasswordListController implements NativeKeyListener {
     public void getPassword() {
         TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
-        textEncryptor.setPassword(loginPageController.masterPassword.getText());
+        textEncryptor.setPassword(masterPassword.getPassword());
+        masterPassword.clearPasswordCache();
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                 new StringSelection(textEncryptor.decrypt(db.getPassword(tableView.getSelectionModel().getSelectedItem().getUsername(), accordion.getExpandedPane().getText()).getPassword())), null
         );
@@ -136,21 +136,12 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     /**
-     * gets the login page controller
+     * sets the master Password
      *
-     * @return login page controller
+     * @param masterPassword login page controller
      */
-    public LoginPageController getLoginPageController() {
-        return loginPageController;
-    }
-
-    /**
-     * sets the login page controller
-     *
-     * @param loginPageController login page controller
-     */
-    public void setLoginPageController(LoginPageController loginPageController) {
-        this.loginPageController = loginPageController;
+    public void setMasterPassword(MasterPassword masterPassword) {
+        this.masterPassword = masterPassword;
     }
 
     /**
@@ -177,7 +168,7 @@ public class PasswordListController implements NativeKeyListener {
         FXMLLoader fxmlLoader = loadFXML("addEntryDialog");
         Parent parent = fxmlLoader.load();
         AddEntryDialogController dialogController = fxmlLoader.getController();
-        dialogController.setLoginPageController(loginPageController);
+        dialogController.setMasterPassword(this.masterPassword);
         dialogController.setDb(db);
         dialogController.setPNameText(pName);
         Scene scene = new Scene(parent);
@@ -185,7 +176,8 @@ public class PasswordListController implements NativeKeyListener {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
-        loadTable(loginPageController.masterPassword.getText());
+        loadTable(masterPassword.getPassword());
+        masterPassword.clearPasswordCache();
     }
 
     private void createAddEntryDialog() throws IOException {
@@ -231,10 +223,12 @@ public class PasswordListController implements NativeKeyListener {
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_X) {
-            if (loginPageController.masterPassword.getText().equals("")) {
+            if (masterPassword.getPassword().equals("")) {
+                masterPassword.clearPasswordCache();
                 System.out.println("PasswordManager is Locked");
                 return;
             }
+            masterPassword.clearPasswordCache();
             String activeWindow = getActiveWindow();
 
             Platform.runLater(() -> {
@@ -252,10 +246,12 @@ public class PasswordListController implements NativeKeyListener {
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_Y) {
-            if (loginPageController.masterPassword.getText().equals("")) {
+            if (masterPassword.getPassword().equals("")) {
+                masterPassword.clearPasswordCache();
                 System.out.println("PasswordManager is Locked");
                 return true;
             }
+            masterPassword.clearPasswordCache();
             String activeWindow = getActiveWindow();
 
             Program program = db.getPasswords(activeWindow);
@@ -268,7 +264,8 @@ public class PasswordListController implements NativeKeyListener {
 
             Account account = program.getPasswords().get(0);
 
-            sendKeys(FileCrypt.decryptText(account.getPassword(), loginPageController.masterPassword.getText()));
+            sendKeys(FileCrypt.decryptText(account.getPassword(), masterPassword.getPassword()));
+            masterPassword.clearPasswordCache();
             return true;
         }
         return false;
@@ -280,10 +277,12 @@ public class PasswordListController implements NativeKeyListener {
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_A) {
             e.setKeyCode(0);
-            if (loginPageController.masterPassword.getText().equals("")) {
+            if (masterPassword.getPassword().equals("")) {
+                masterPassword.clearPasswordCache();
                 System.out.println("PasswordManager is Locked");
                 return true;
             }
+            masterPassword.clearPasswordCache();
             String activeWindow = getActiveWindow();
             Program program = db.getPasswords(activeWindow);
             //no match found
@@ -298,7 +297,8 @@ public class PasswordListController implements NativeKeyListener {
 
             sendKeys(account.getUsername());
             sendKeys("\t");
-            sendKeys(FileCrypt.decryptText(account.getPassword(), loginPageController.masterPassword.getText()));
+            sendKeys(FileCrypt.decryptText(account.getPassword(), masterPassword.getPassword()));
+            masterPassword.clearPasswordCache();
             return true;
         }
         return false;
@@ -318,7 +318,7 @@ public class PasswordListController implements NativeKeyListener {
         UserSelectionDialogController userSelectionDialogController = fxmlLoader.getController();
         userSelectionDialogController.setEntry(program);
         userSelectionDialogController.loadTable();
-        userSelectionDialogController.setLoginPageController(loginPageController);
+        userSelectionDialogController.setMasterPassword(masterPassword);
         userSelectionDialogController.setOnlyPassword(onlyPassword);
         stage.initStyle(StageStyle.UNDECORATED);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -353,6 +353,14 @@ public class PasswordListController implements NativeKeyListener {
 
     private static FXMLLoader loadFXML(String fxml) {
         return new FXMLLoader(AddEntryDialogController.class.getResource("/" + fxml + ".fxml"));
+    }
+
+    public void resetPassword(){
+        if (this.masterPassword != null) {
+            this.masterPassword.clearPasswordCache();
+            this.masterPassword.clearGuardedString();
+        }
+        this.masterPassword = null;
     }
 
 

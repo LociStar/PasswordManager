@@ -3,24 +3,25 @@ package com.passswordmanager;
 import com.passswordmanager.Controllers.LoginPageController;
 import com.passswordmanager.Controllers.PasswordListController;
 import com.passswordmanager.Database.DatabaseConnectionHandler;
-import javafx.application.*;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.*;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.stage.*;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.dispatcher.SwingDispatchService;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
-import java.text.*;
-import java.util.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +37,8 @@ public class StartInBackground extends Application {
     private Stage passwordStage;
     private Stage loginStage;
     private LoginPageController loginPageController;
+    private boolean isLocked;
+
     private DatabaseConnectionHandler db;
 
     // a timer allowing the tray icon to provide a periodic notification event.
@@ -64,7 +67,6 @@ public class StartInBackground extends Application {
 
         //load fxml
         FXMLLoader loaderLP = loadFXML("loginPage");
-        System.out.println(loaderLP.getLocation());
         Parent parent = loaderLP.load();
         this.loginPageController = loaderLP.getController();
         Scene scene = new Scene(parent);
@@ -80,7 +82,7 @@ public class StartInBackground extends Application {
         passwordStage.setScene(scene1);
         passwordStage.initStyle(StageStyle.DECORATED);
         PasswordListController passwordListController = loaderPL.getController();
-        passwordListController.setLoginPageController(loginPageController);
+        passwordListController.setMasterPassword(loginPageController.getMasterPassword());
 
         loginPageController.setPasswordListController(passwordListController);
         loginPageController.setPasswordStage(passwordStage);
@@ -154,13 +156,16 @@ public class StartInBackground extends Application {
                                                 java.awt.TrayIcon.MessageType.INFO
                                         );
                                         //Password reset
-                                        loginPageController.masterPassword.setText("");
+                                        loginPageController.passwordField.setText("");
+                                        loginPageController.resetPassword();
+                                        loginPageController.getPasswordListController().accordion.getPanes().removeAll(loginPageController.getPasswordListController().accordion.getPanes());
+
                                     }
                             );
                         }
                     },
                     0,
-                    1200_000
+                    60_000
             );
 
             // add the application tray icon to the system tray.
@@ -175,12 +180,18 @@ public class StartInBackground extends Application {
      * Shows the application stage and ensures that it is brought ot the front of all stages.
      */
     private void showStage() {
-        if (loginStage != null) {
-            loginStage.show();
-            loginStage.toFront();
-        } else {
-            System.out.println("noooooooooooooooooooo");
+        if (loginPageController.isLocked()){
+            if (loginStage != null) {
+                loginStage.show();
+                loginStage.toFront();
+            } else {
+                System.out.println("Error");
+            }
         }
+        else {
+            passwordStage.show();
+        }
+
     }
 
     public static void main(String[] args) {

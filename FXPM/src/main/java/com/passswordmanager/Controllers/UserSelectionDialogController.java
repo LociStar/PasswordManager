@@ -1,6 +1,7 @@
 package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Datatypes.Account;
+import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
 import com.passswordmanager.Util.Keyboard;
 import javafx.collections.FXCollections;
@@ -24,7 +25,7 @@ public class UserSelectionDialogController {
 
     private Program program;
 
-    private LoginPageController loginPageController;
+    private MasterPassword masterPassword;
 
     private boolean onlyPassword = false;
 
@@ -74,22 +75,22 @@ public class UserSelectionDialogController {
 
     @FXML
     public void onKeyReleased(KeyEvent keyEvent) {
-        System.out.println(keyEvent.getCode());
         if (keyEvent.getCode().equals(KeyCode.ENTER)) {
             closeStage(keyEvent);
             AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
-            textEncryptor.setPassword(loginPageController.masterPassword.getText());
+            textEncryptor.setPassword(masterPassword.getPassword());
+            masterPassword.clearPasswordCache();
             if (!onlyPassword){
                 sendKeys(table.getSelectionModel().getSelectedItem().getUsername());
                 sendKeys("\t");
             }
             sendKeys(textEncryptor.decrypt(table.getSelectionModel().getSelectedItem().getPassword()));
-            //closeStage(keyEvent);
+            closeStage(keyEvent);
         }
     }
 
-    public void setLoginPageController(LoginPageController loginPageController) {
-        this.loginPageController = loginPageController;
+    public void setMasterPassword(MasterPassword masterPassword) {
+        this.masterPassword = masterPassword;
     }
 
     public void setOnlyPassword(boolean onlyPassword) {
