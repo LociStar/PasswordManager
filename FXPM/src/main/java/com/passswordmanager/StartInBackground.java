@@ -2,7 +2,6 @@ package com.passswordmanager;
 
 import com.passswordmanager.Controllers.LoginPageController;
 import com.passswordmanager.Controllers.PasswordListController;
-import com.passswordmanager.Database.DatabaseConnectionHandler;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -18,8 +17,6 @@ import org.jnativehook.dispatcher.SwingDispatchService;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -37,15 +34,12 @@ public class StartInBackground extends Application {
     private Stage passwordStage;
     private Stage loginStage;
     private LoginPageController loginPageController;
-    private boolean isLocked;
-
-    private DatabaseConnectionHandler db;
 
     // a timer allowing the tray icon to provide a periodic notification event.
     private final Timer notificationTimer = new Timer();
 
     // format used to display the current time in a tray icon notification.
-    private final DateFormat timeFormat = SimpleDateFormat.getTimeInstance();
+    //private final DateFormat timeFormat = SimpleDateFormat.getTimeInstance();
 
     // sets up the javafx application.
     // a tray icon is setup for the icon, but the main stage remains invisible until the user
