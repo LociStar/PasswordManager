@@ -26,12 +26,12 @@ public class Program {
 
     public Program(String title) {
         this.title = title;
-        this.accounts = new ArrayList<Account>();
+        this.accounts = new ArrayList<>();
     }
 
     public Program() {
         this.title = "";
-        this.accounts = new ArrayList<Account>();
+        this.accounts = new ArrayList<>();
     }
 
     public String getTitle() {
