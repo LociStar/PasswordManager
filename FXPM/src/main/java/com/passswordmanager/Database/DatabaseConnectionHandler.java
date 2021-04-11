@@ -18,7 +18,7 @@ public class DatabaseConnectionHandler {
     private Statement st;
 
     public DatabaseConnectionHandler(String password, String databasePath) {
-        if (!databasePath.equals("")) url = "jdbc:h2:file:" + databasePath + ";mode=MySQL";
+        if (!databasePath.equals("")) url = "jdbc:h2:file:" + databasePath + "/passwordManager;mode=MySQL";
         createDB(password);
     }
 

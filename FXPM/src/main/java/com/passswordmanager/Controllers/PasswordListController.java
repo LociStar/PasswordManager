@@ -14,6 +14,7 @@ import com.sun.jna.platform.win32.WinDef;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -334,5 +335,29 @@ public class PasswordListController implements NativeKeyListener {
         this.masterPassword = null;
     }
 
+    @FXML
+    public void onSettingsPressed(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = loadFXML("settingsUI");
+        Parent parent = null;
+        try {
+            parent = fxmlLoader.load();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        assert parent != null;
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        SettingsUIController settingsUIController = fxmlLoader.getController();
+        settingsUIController.setConfig(this.config);
+        settingsUIController.loadConfig();
+        //stage.initStyle(StageStyle.UNDECORATED);
+        //stage.initModality(Modality.WINDOW_MODAL);
+        stage.setAlwaysOnTop(true);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
 
+    public Config getConfig() {
+        return config;
+    }
 }
