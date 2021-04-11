@@ -4,15 +4,12 @@ import com.lambdaworks.crypto.SCryptUtil;
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.MasterPassword;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-
-import java.io.IOException;
 
 /**
  * FXML Controller to control loginPage.fxml
@@ -23,17 +20,14 @@ public class LoginPageController {
 
     private PasswordListController passwordListController;
     private Stage passwordStage;
-    private Parent parent;
     private MasterPassword masterPassword;
     private boolean locked = true;
 
     /**
      * Handles the event, if the unlock button is pressed.
      * Changes Scene, if password does match.
-     *
-     * @throws IOException Input exception
      */
-    public void onUnlockPressed() throws IOException {
+    public void onUnlockPressed() {
         //the hashed master password
         String hash = "$s0$30808$EIjYo1QSYopS4FBUoAJgBw==$Alr+ZkCNpNxnAA2R4PCAYzfSSMF3oj47tpSrad7OA0w=";
         boolean matched = SCryptUtil.check(passwordField.getText(), hash);
@@ -87,15 +81,6 @@ public class LoginPageController {
     }
 
     /**
-     * Gets the password Stage
-     *
-     * @return password stage
-     */
-    public Stage getPasswordStage() {
-        return passwordStage;
-    }
-
-    /**
      * Sets the password stage
      *
      * @param passwordStage password stage
@@ -104,7 +89,7 @@ public class LoginPageController {
         this.passwordStage = passwordStage;
     }
 
-    public void onKeyPressed(KeyEvent keyEvent) throws IOException {
+    public void onKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode().equals(KeyCode.ENTER)) {
             onUnlockPressed();
         }
