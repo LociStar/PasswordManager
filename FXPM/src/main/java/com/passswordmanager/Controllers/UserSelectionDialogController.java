@@ -80,7 +80,7 @@ public class UserSelectionDialogController {
             AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
             textEncryptor.setPassword(masterPassword.getPassword());
             masterPassword.clearPasswordCache();
-            if (!onlyPassword){
+            if (!onlyPassword) {
                 sendKeys(table.getSelectionModel().getSelectedItem().getUsername());
                 sendKeys("\t");
             }

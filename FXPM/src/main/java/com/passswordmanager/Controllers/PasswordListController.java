@@ -355,7 +355,7 @@ public class PasswordListController implements NativeKeyListener {
         return new FXMLLoader(AddEntryDialogController.class.getResource("/" + fxml + ".fxml"));
     }
 
-    public void resetPassword(){
+    public void resetPassword() {
         if (this.masterPassword != null) {
             this.masterPassword.clearPasswordCache();
             this.masterPassword.clearGuardedString();

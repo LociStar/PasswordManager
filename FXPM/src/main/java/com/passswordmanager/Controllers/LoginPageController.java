@@ -114,7 +114,7 @@ public class LoginPageController {
         return this.masterPassword;
     }
 
-    public void resetPassword(){
+    public void resetPassword() {
         this.locked = true;
         if (this.masterPassword != null) {
             this.masterPassword.clearPasswordCache();

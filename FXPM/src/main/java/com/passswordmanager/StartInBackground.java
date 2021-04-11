@@ -180,15 +180,14 @@ public class StartInBackground extends Application {
      * Shows the application stage and ensures that it is brought ot the front of all stages.
      */
     private void showStage() {
-        if (loginPageController.isLocked()){
+        if (loginPageController.isLocked()) {
             if (loginStage != null) {
                 loginStage.show();
                 loginStage.toFront();
             } else {
                 System.out.println("Error");
             }
-        }
-        else {
+        } else {
             passwordStage.show();
         }
 

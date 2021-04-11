@@ -42,6 +42,7 @@ public class MasterPassword {
 
     /**
      * !!!CALL clearPasswordCache AFTER THIS METHOD!!!
+     *
      * @return char[] password
      */
     public String getPassword() {
