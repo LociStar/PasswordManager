@@ -11,13 +11,14 @@ import java.util.Map;
 
 
 public class DatabaseConnectionHandler {
-    private final String url = "jdbc:h2:file:C:/data/passwordManager;mode=MySQL";
+    private String url = "jdbc:h2:file:C:/data/passwordManager;mode=MySQL";
     private final String user = "sa";
 
     private Connection con;
     private Statement st;
 
-    public DatabaseConnectionHandler(String password) {
+    public DatabaseConnectionHandler(String password, String databasePath) {
+        if (!databasePath.equals("")) url = "jdbc:h2:file:" + databasePath + "/passwordManager;mode=MySQL";
         createDB(password);
     }
 

@@ -3,6 +3,8 @@ package com.passswordmanager.Controllers;
 import com.lambdaworks.crypto.SCryptUtil;
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.MasterPassword;
+import com.passswordmanager.StartInBackground;
+import com.passswordmanager.Util.Config;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
@@ -23,19 +25,19 @@ public class LoginPageController {
     private MasterPassword masterPassword;
     private boolean locked = true;
 
+    private final Config config = new Config(StartInBackground.class.getResource("/config.properties").getPath());
+
     /**
      * Handles the event, if the unlock button is pressed.
      * Changes Scene, if password does match.
      */
     public void onUnlockPressed() {
         //the hashed master password
-        String hash = "$s0$30808$EIjYo1QSYopS4FBUoAJgBw==$Alr+ZkCNpNxnAA2R4PCAYzfSSMF3oj47tpSrad7OA0w=";
+        String hash = config.getMasterPassword();
         boolean matched = SCryptUtil.check(passwordField.getText(), hash);
         if (matched) {
             char[] password = passwordField.getText().toCharArray();
-            System.out.println(password);
             this.masterPassword = new MasterPassword(password);
-            System.out.println(masterPassword.getPassword());
             masterPassword.clearChar(password);
             //change Scene
             Scene scene = passwordField.getScene();
@@ -43,13 +45,16 @@ public class LoginPageController {
             Stage stage = (Stage) window;
             stage.hide();
             passwordField.clear();
-            passwordListController.setDb(new DatabaseConnectionHandler(masterPassword.getPassword()));
+            passwordListController.setDb(new DatabaseConnectionHandler(masterPassword.getPassword(), config.getDatabasePath()));
             passwordListController.loadTable(masterPassword.getPassword());
             passwordListController.setMasterPassword(this.masterPassword);
             masterPassword.clearPasswordCache();
             stage = passwordStage;
             this.locked = false;
             stage.show();
+        } else {
+            System.out.println(hash);
+            System.out.println("Incorrect Password");
         }
 
     }

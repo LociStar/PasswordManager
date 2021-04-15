@@ -4,6 +4,8 @@ import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.Account;
 import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
+import com.passswordmanager.StartInBackground;
+import com.passswordmanager.Util.Config;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
 import com.sun.jna.Native;
@@ -12,6 +14,7 @@ import com.sun.jna.platform.win32.WinDef;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -44,7 +47,9 @@ public class PasswordListController implements NativeKeyListener {
     private ContextMenu contextMenu;
     private DatabaseConnectionHandler db;
 
-    private static final int MAX_TITLE_LENGTH = 1024;
+    private final Config config = new Config(StartInBackground.class.getResource("/config.properties").getPath());
+
+    private final int MAX_TITLE_LENGTH = config.getMAX_TITLE_LENGTH();
 
     /**
      * Constructor, creates the context menu for the table view
@@ -330,5 +335,29 @@ public class PasswordListController implements NativeKeyListener {
         this.masterPassword = null;
     }
 
+    @FXML
+    public void onSettingsPressed(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = loadFXML("settingsUI");
+        Parent parent = null;
+        try {
+            parent = fxmlLoader.load();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        assert parent != null;
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        SettingsUIController settingsUIController = fxmlLoader.getController();
+        settingsUIController.setConfig(this.config);
+        settingsUIController.loadConfig();
+        //stage.initStyle(StageStyle.UNDECORATED);
+        //stage.initModality(Modality.WINDOW_MODAL);
+        stage.setAlwaysOnTop(true);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
 
+    public Config getConfig() {
+        return config;
+    }
 }

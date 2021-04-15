@@ -2,6 +2,7 @@ package com.passswordmanager;
 
 import com.passswordmanager.Controllers.LoginPageController;
 import com.passswordmanager.Controllers.PasswordListController;
+import com.passswordmanager.Util.Config;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -34,6 +35,8 @@ public class StartInBackground extends Application {
     private Stage passwordStage;
     private Stage loginStage;
     private LoginPageController loginPageController;
+
+    private final Config config = new Config(StartInBackground.class.getResource("/config.properties").getPath());
 
     // a timer allowing the tray icon to provide a periodic notification event.
     private final Timer notificationTimer = new Timer();
@@ -127,8 +130,14 @@ public class StartInBackground extends Application {
             java.awt.MenuItem exitItem = new java.awt.MenuItem("Close");
             exitItem.addActionListener(event -> {
                 notificationTimer.cancel();
+                Platform.runLater(()->{
+                    passwordStage.close();
+                    loginPageController.getMasterPassword().clearGuardedString();
+                    loginStage.close();
+                });
                 Platform.exit();
                 tray.remove(trayIcon);
+                System.exit(0);
             });
 
             // setup the popup menu for the application.
@@ -159,7 +168,7 @@ public class StartInBackground extends Application {
                         }
                     },
                     0,
-                    60_000
+                    config.getDelay()
             );
 
             // add the application tray icon to the system tray.

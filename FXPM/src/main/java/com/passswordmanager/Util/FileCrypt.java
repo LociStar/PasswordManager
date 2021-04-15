@@ -51,11 +51,6 @@ public abstract class FileCrypt {
         Map<String, String> pNames = db.getProgramNames();
         Map<String, Map<String, String>> hashMap = new HashMap<>();
         pNames.forEach((s, s2) -> hashMap.put(s + ":" + s2, db.getUsrPwNames(s)));
-//        Map<String, String> output = new HashMap<>();
-//        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
-//        aes256TextEncryptor.setPassword(masterPassword);
-//        hashMap.forEach((name, pw) -> output.put(name, aes256TextEncryptor.decrypt(pw)));
-//        return output;
         return hashMap;
     }
 
