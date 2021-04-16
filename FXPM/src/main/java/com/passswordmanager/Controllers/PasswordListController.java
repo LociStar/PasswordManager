@@ -24,7 +24,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.jasypt.util.text.AES256TextEncryptor;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
@@ -43,7 +42,6 @@ public class PasswordListController implements NativeKeyListener {
     public Accordion accordion;
 
     private MasterPassword masterPassword;
-    private ContextMenu contextMenu;
     private DatabaseConnectionHandler db;
 
     private final Config config = new Config();
@@ -73,27 +71,59 @@ public class PasswordListController implements NativeKeyListener {
      */
     public void getPassword() {
         TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
-        AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
-        textEncryptor.setPassword(masterPassword.getPassword());
-        masterPassword.clearPasswordCache();
+        Account account = db.getPassword(tableView.getSelectionModel().getSelectedItem().getUsername(), accordion.getExpandedPane().getText());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-                new StringSelection(textEncryptor.decrypt(db.getPassword(tableView.getSelectionModel().getSelectedItem().getUsername(), accordion.getExpandedPane().getText()).getPassword())), null
+                new StringSelection(FileCrypt.decryptText(account.getPassword(), masterPassword.getPassword())), null
         );
+        masterPassword.clearPasswordCache();
     }
 
     public ContextMenu createContextMenu() {
-        contextMenu = new ContextMenu();
+        ContextMenu contextMenu = new ContextMenu();
         //create new MenuItem
         MenuItem copyName = new MenuItem("copy Name");
         MenuItem copyPassword = new MenuItem("copy Password");
+        MenuItem deletePassword = new MenuItem("delete Entry");
+        MenuItem showPassword = new MenuItem("show Password");
+        MenuItem hidePassword = new MenuItem("hide Password");
         //add MenuItem to ContextMenu
         contextMenu.getItems().add(copyName);
         contextMenu.getItems().add(copyPassword);
+        contextMenu.getItems().add(showPassword);
+        contextMenu.getItems().add(hidePassword);
+        contextMenu.getItems().add(deletePassword);
         //set onActionEvent of MenuItem
         copyName.setOnAction(event -> getName());
         copyPassword.setOnAction(event -> getPassword());
+        deletePassword.setOnAction(event -> deletePassword());
+        showPassword.setOnAction(event -> showPassword());
+        hidePassword.setOnAction(event -> hidePassword());
 
         return contextMenu;
+    }
+
+    private void hidePassword() {
+        TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
+        tableView.getSelectionModel().getSelectedItem().setPassword("********");
+        tableView.refresh();
+    }
+
+    private void showPassword() {
+        TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
+        TitledPane pane = accordion.getExpandedPane();
+        String username = tableView.getSelectionModel().getSelectedItem().getUsername();
+        String pName = pane.getText();
+        tableView.getSelectionModel().getSelectedItem().setPassword(FileCrypt.decryptText(db.getPassword(username, pName).getPassword(), masterPassword.getPassword()));
+        masterPassword.clearPasswordCache();
+        tableView.refresh();
+    }
+
+    private void deletePassword() {
+        TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
+        db.delete(tableView.getSelectionModel().getSelectedItem().getUsername(), accordion.getExpandedPane().getText());
+        db.deleteEmptyPrograms();
+        loadTable(masterPassword.getPassword());
+        masterPassword.clearPasswordCache();
     }
 
     private TitledPane createTiltedPane(String name, String nickname, Map<String, String> list) {
