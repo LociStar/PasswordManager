@@ -83,11 +83,20 @@ public class DatabaseConnectionHandler {
 
     public boolean delete(String username, String programName) {
         try {
-            st.execute("DELETE FROM Password WHERE username='" + username + "' AND WHERE pName='" + programName + "';");
+            st.execute("DELETE FROM Password WHERE username='" + username + "' AND pName='" + programName + "';");
             return true;
         } catch (SQLException sqlException) {
             System.out.println("Delete Error: " + sqlException.getErrorCode());
             return false;
+        }
+    }
+
+    public void deleteEmptyPrograms() {
+        try {
+            st.execute("DELETE FROM ProgramName WHERE name NOT IN (SELECT pName FROM Password WHERE pName is NOT NULL);");
+        } catch (SQLException sqlException) {
+            System.out.println("Delete Error: " + sqlException.getErrorCode());
+            sqlException.printStackTrace();
         }
     }
 

@@ -86,14 +86,25 @@ public class PasswordListController implements NativeKeyListener {
         //create new MenuItem
         MenuItem copyName = new MenuItem("copy Name");
         MenuItem copyPassword = new MenuItem("copy Password");
+        MenuItem deletePassword = new MenuItem("delete Entry");
         //add MenuItem to ContextMenu
         contextMenu.getItems().add(copyName);
         contextMenu.getItems().add(copyPassword);
+        contextMenu.getItems().add(deletePassword);
         //set onActionEvent of MenuItem
         copyName.setOnAction(event -> getName());
         copyPassword.setOnAction(event -> getPassword());
+        contextMenu.setOnAction(event -> deletePassword());
 
         return contextMenu;
+    }
+
+    private void deletePassword() {
+        TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
+        db.delete(tableView.getSelectionModel().getSelectedItem().getUsername(), accordion.getExpandedPane().getText());
+        db.deleteEmptyPrograms();
+        loadTable(masterPassword.getPassword());
+        masterPassword.clearPasswordCache();
     }
 
     private TitledPane createTiltedPane(String name, String nickname, Map<String, String> list) {
