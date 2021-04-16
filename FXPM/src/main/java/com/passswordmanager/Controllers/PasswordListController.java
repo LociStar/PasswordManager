@@ -42,7 +42,6 @@ public class PasswordListController implements NativeKeyListener {
     public Accordion accordion;
 
     private MasterPassword masterPassword;
-    private ContextMenu contextMenu;
     private DatabaseConnectionHandler db;
 
     private final Config config = new Config();
@@ -80,7 +79,7 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     public ContextMenu createContextMenu() {
-        contextMenu = new ContextMenu();
+        ContextMenu contextMenu = new ContextMenu();
         //create new MenuItem
         MenuItem copyName = new MenuItem("copy Name");
         MenuItem copyPassword = new MenuItem("copy Password");
