@@ -4,7 +4,6 @@ import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.Account;
 import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
-import com.passswordmanager.StartInBackground;
 import com.passswordmanager.Util.Config;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
@@ -47,7 +46,7 @@ public class PasswordListController implements NativeKeyListener {
     private ContextMenu contextMenu;
     private DatabaseConnectionHandler db;
 
-    private final Config config = new Config(StartInBackground.class.getResource("/config.properties").getPath());
+    private final Config config = new Config();
 
     private final int MAX_TITLE_LENGTH = config.getMAX_TITLE_LENGTH();
 

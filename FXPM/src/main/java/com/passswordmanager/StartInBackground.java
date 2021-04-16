@@ -36,7 +36,7 @@ public class StartInBackground extends Application {
     private Stage loginStage;
     private LoginPageController loginPageController;
 
-    private final Config config = new Config(StartInBackground.class.getResource("/config.properties").getPath());
+    private final Config config = new Config();
 
     // a timer allowing the tray icon to provide a periodic notification event.
     private final Timer notificationTimer = new Timer();

@@ -1,9 +1,6 @@
 package com.passswordmanager.Util;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Properties;
 
 public class Config {
@@ -11,13 +8,36 @@ public class Config {
     private long delay;
     private String databasePath;
     private int MAX_TITLE_LENGTH;
+    private final String configPath = System.getenv("APPDATA") + "\\PasswordManager\\config.properties";
 
-    public Config(String configPath) {
+    public Config() {
         try {
+            createConfig();
             readConfig();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void createConfig() throws IOException {
+        File config = new File(configPath);
+        System.out.println(config.getPath());
+        config.getParentFile().mkdir();
+        if (config.createNewFile()){
+            //FileOutputStream configOutputStream = new FileOutputStream(config, false);
+            this.masterPassword = "$s0$30808$EIjYo1QSYopS4FBUoAJgBw==$Alr+ZkCNpNxnAA2R4PCAYzfSSMF3oj47tpSrad7OA0w=";
+            this.delay = 120000;
+            this.databasePath = System.getenv("APPDATA") + "\\PasswordManager";
+            this.MAX_TITLE_LENGTH = 1024;
+            try (OutputStream output = new FileOutputStream(config, false)) {
+                output.write(1);
+            } catch (IOException io) {
+                io.printStackTrace();
+            }
+            this.writeConfig();
+        }
+
+
     }
 
     public void readConfig() throws IOException {
@@ -25,8 +45,8 @@ public class Config {
         try {
             Properties prop = new Properties();
             String propFileName = "config.properties";
-            inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);//new FileInputStream(Config.class.getResource("/config.properties").getPath());
-            System.out.println(Config.class.getResource("/config.properties").getPath());
+            inputStream = new FileInputStream(configPath);
+            System.out.println(configPath);
             prop.load(inputStream);
             System.out.println(prop);
 
@@ -45,7 +65,7 @@ public class Config {
     }
 
     public void writeConfig() {
-        try (OutputStream output = new FileOutputStream(Config.class.getResource("/config.properties").getPath())) {
+        try (OutputStream output = new FileOutputStream(configPath)) {
 
             Properties prop = new Properties();
 
@@ -57,8 +77,6 @@ public class Config {
 
             // save properties to project root folder
             prop.store(output, null);
-
-            System.out.println(Config.class.getResource("/config.properties").getPath());
 
         } catch (IOException io) {
             io.printStackTrace();

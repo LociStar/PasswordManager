@@ -3,7 +3,6 @@ package com.passswordmanager.Controllers;
 import com.lambdaworks.crypto.SCryptUtil;
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.MasterPassword;
-import com.passswordmanager.StartInBackground;
 import com.passswordmanager.Util.Config;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -25,7 +24,7 @@ public class LoginPageController {
     private MasterPassword masterPassword;
     private boolean locked = true;
 
-    private final Config config = new Config(StartInBackground.class.getResource("/config.properties").getPath());
+    private final Config config = new Config();
 
     /**
      * Handles the event, if the unlock button is pressed.
