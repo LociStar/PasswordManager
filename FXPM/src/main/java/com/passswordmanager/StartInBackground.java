@@ -1,5 +1,6 @@
 package com.passswordmanager;
 
+import com.passswordmanager.Controllers.InstallUIController;
 import com.passswordmanager.Controllers.LoginPageController;
 import com.passswordmanager.Controllers.PasswordListController;
 import com.passswordmanager.Util.Config;
@@ -11,13 +12,15 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.dispatcher.SwingDispatchService;
 
 import javax.imageio.ImageIO;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -36,7 +39,9 @@ public class StartInBackground extends Application {
     private Stage loginStage;
     private LoginPageController loginPageController;
 
-    private final Config config = new Config();
+    private Config config;
+
+    private boolean isInstalled = false;
 
     // a timer allowing the tray icon to provide a periodic notification event.
     private final Timer notificationTimer = new Timer();
@@ -53,39 +58,91 @@ public class StartInBackground extends Application {
         // stores a reference to the stage.
         this.loginStage = stage;
 
-        // instructs the javafx system not to exit implicitly when the last application window is shut.
-        Platform.setImplicitExit(false);
+        newInstall();
 
-        // sets up the tray icon (using awt code run on the swing thread).
-        javax.swing.SwingUtilities.invokeLater(this::addAppToTray);
+        if (!isInstalled) {
+            FXMLLoader loaderLP = loadFXML("installUI");
+            Parent parent = loaderLP.load();
+            InstallUIController installUIController = loaderLP.getController();
+            installUIController.setDatabasePath(System.getenv("APPDATA") + "\\PasswordManager");
+            Scene scene = new Scene(parent);
+            stage.setOnCloseRequest(event -> {
+                Platform.exit();
+                System.exit(0);
+            });
+            stage.setScene(scene);
+            stage.show();
+        } else {
+            this.config = new Config();
 
-        // out stage will be translucent, so give it a transparent style.
-        stage.initStyle(StageStyle.TRANSPARENT);
+            // instructs the javafx system not to exit implicitly when the last application window is shut.
+            Platform.setImplicitExit(false);
 
-        //load fxml
-        FXMLLoader loaderLP = loadFXML("loginPage");
-        Parent parent = loaderLP.load();
-        this.loginPageController = loaderLP.getController();
-        Scene scene = new Scene(parent);
-        scene.setFill(Color.TRANSPARENT);
+            // sets up the tray icon (using awt code run on the swing thread).
+            javax.swing.SwingUtilities.invokeLater(this::addAppToTray);
 
-        stage.setScene(scene);
+            // out stage will be translucent, so give it a transparent style.
+            stage.initStyle(StageStyle.TRANSPARENT);
 
-        //load second fxml
-        FXMLLoader loaderPL = loadFXML("passwordListUI");
-        Parent parent1 = loaderPL.load();
-        Scene scene1 = new Scene(parent1);
-        passwordStage = new Stage();
-        passwordStage.setScene(scene1);
-        passwordStage.initStyle(StageStyle.DECORATED);
-        PasswordListController passwordListController = loaderPL.getController();
-        passwordListController.setMasterPassword(loginPageController.getMasterPassword());
+            //load fxml
+            FXMLLoader loaderLP = loadFXML("loginPage");
+            Parent parent = loaderLP.load();
+            this.loginPageController = loaderLP.getController();
+            Scene scene = new Scene(parent);
+            scene.setFill(Color.TRANSPARENT);
 
-        loginPageController.setPasswordListController(passwordListController);
-        loginPageController.setPasswordStage(passwordStage);
+            stage.setScene(scene);
 
-        //add keyListener Listener
-        javax.swing.SwingUtilities.invokeLater(() -> GlobalScreen.addNativeKeyListener(passwordListController));
+            //load second fxml
+            FXMLLoader loaderPL = loadFXML("passwordListUI");
+            Parent parent1 = loaderPL.load();
+            Scene scene1 = new Scene(parent1);
+            passwordStage = new Stage();
+            passwordStage.setScene(scene1);
+            passwordStage.initStyle(StageStyle.DECORATED);
+            PasswordListController passwordListController = loaderPL.getController();
+            passwordListController.setMasterPassword(loginPageController.getMasterPassword());
+
+            loginPageController.setPasswordListController(passwordListController);
+            loginPageController.setPasswordStage(passwordStage);
+
+            //add keyListener Listener
+            javax.swing.SwingUtilities.invokeLater(() -> GlobalScreen.addNativeKeyListener(passwordListController));
+        }
+    }
+
+    private void exit(WindowEvent event){
+        System.exit(0);
+    }
+
+    private void newInstall() throws IOException {
+        InputStream inputStream = null;
+        try {
+            Properties prop = new Properties();
+            System.out.println("---------------------------");
+            System.out.println(new File(".").getCanonicalPath());
+            System.out.println("---------------------------");
+            inputStream = new FileInputStream(new File(".").getCanonicalPath() + "\\config.txt");
+            prop.load(inputStream);
+            this.isInstalled = Boolean.parseBoolean(prop.getProperty("installed"));
+        } catch (Exception e) {
+            System.out.println("Exception: " + e);
+            File file = new File(new File(".").getCanonicalPath() + "\\config.txt");
+            OutputStream outputStream = new FileOutputStream(file);
+            Properties prop = new Properties();
+
+            // set the properties value
+            prop.setProperty("installed", "" + false + "");
+
+            // save properties to project root folder
+            prop.store(outputStream, null);
+            newInstall();
+            outputStream.close();
+
+        } finally {
+            if (inputStream != null)
+                inputStream.close();
+        }
     }
 
     /**
@@ -130,7 +187,7 @@ public class StartInBackground extends Application {
             java.awt.MenuItem exitItem = new java.awt.MenuItem("Close");
             exitItem.addActionListener(event -> {
                 notificationTimer.cancel();
-                Platform.runLater(()->{
+                Platform.runLater(() -> {
                     passwordStage.close();
                     loginPageController.getMasterPassword().clearGuardedString();
                     loginStage.close();

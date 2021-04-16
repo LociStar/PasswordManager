@@ -19,7 +19,7 @@ public class GenerateMPHash {
         boolean matched = SCryptUtil.check(password, hash);
         System.out.println("Must be True: " + matched);
 
-        boolean matched2 = SCryptUtil.check(password, "$s0$30808$EIjYo1QSYopS4FBUoAJgBw==$Alr+ZkCNpNxnAA2R4PCAYzfSSMF3oj47tpSrad7OA0w=");
+        boolean matched2 = SCryptUtil.check(password, "$s0$30808$e1wbFn52nK9s2XB4N1WWvw==$uUhWlTxJ96c5IiLIpz3g73duZS8Dv4Pymf2wmQ8BLrE=");
         System.out.println("Must be True: " + matched2);
 
         matched = SCryptUtil.check("passwordno", hash);

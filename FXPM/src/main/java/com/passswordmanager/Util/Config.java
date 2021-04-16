@@ -12,22 +12,29 @@ public class Config {
 
     public Config() {
         try {
-            createConfig();
             readConfig();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void createConfig() throws IOException {
+    public Config(String masterPasswordHashed, String databasePath, long delay, int maxTitleLength) {
+        try {
+            createConfig(masterPasswordHashed, databasePath, delay, maxTitleLength);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createConfig(String masterPasswordHashed, String databasePath, long delay, int maxTitleLength) throws IOException {
         File config = new File(configPath);
         config.getParentFile().mkdir();
-        if (config.createNewFile()){
+        if (config.createNewFile()) {
             //FileOutputStream configOutputStream = new FileOutputStream(config, false);
-            this.masterPassword = "$s0$30808$EIjYo1QSYopS4FBUoAJgBw==$Alr+ZkCNpNxnAA2R4PCAYzfSSMF3oj47tpSrad7OA0w=";
-            this.delay = 120000;
-            this.databasePath = System.getenv("APPDATA") + "\\PasswordManager";
-            this.MAX_TITLE_LENGTH = 1024;
+            this.masterPassword = masterPasswordHashed;
+            this.delay = delay;
+            this.databasePath = databasePath;
+            this.MAX_TITLE_LENGTH = maxTitleLength;
             try (OutputStream output = new FileOutputStream(config, false)) {
                 output.write(1);
             } catch (IOException io) {
