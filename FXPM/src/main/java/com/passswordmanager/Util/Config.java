@@ -21,7 +21,6 @@ public class Config {
 
     public void createConfig() throws IOException {
         File config = new File(configPath);
-        System.out.println(config.getPath());
         config.getParentFile().mkdir();
         if (config.createNewFile()){
             //FileOutputStream configOutputStream = new FileOutputStream(config, false);
@@ -46,9 +45,7 @@ public class Config {
             Properties prop = new Properties();
             String propFileName = "config.properties";
             inputStream = new FileInputStream(configPath);
-            System.out.println(configPath);
             prop.load(inputStream);
-            System.out.println(prop);
 
             this.masterPassword = prop.getProperty("masterPassword").replace("\"", "");
             this.databasePath = prop.getProperty("databasePath").replace("\"", "");
