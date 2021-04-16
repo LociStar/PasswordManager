@@ -4,7 +4,7 @@ Java-Version: 16 <br />
 Language Level: 14
 
 **Start PM:**<br />
-Executing StartInBackgroud.java without adding JavaFX moduls and path, will not start PM.
+execute PasswordManager.jar
 
 PM is configured with maven:
 FXPM is the working directory for maven.
