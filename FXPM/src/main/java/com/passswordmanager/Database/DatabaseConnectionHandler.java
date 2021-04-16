@@ -150,8 +150,6 @@ public class DatabaseConnectionHandler {
         program.setNickname(nickname);
         Account account = new Account(username, "");
         try {
-            System.out.println(nickname);
-            System.out.println(username);
             ResultSet resultSet = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nickname + "';");
             while (resultSet.next()) {
                 //add Passwords to List
