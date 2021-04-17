@@ -11,7 +11,7 @@ FXPM is the working directory for maven.
 To start the PM use maven-command "javafx:run -X -f pom.xml" in FXPM
 <br /><br />
 **Informations:**<br />
-Checkout the [Wiki](https://github.com/LociStar/PasswordManager/wiki/What-is-the-PasswordManager)
+Checkout the [Wiki](https://github.com/LociStar/PasswordManager/wiki)
 
 latest (pre-) release: v1.0.0-beta<br />
 Installation: <br />
