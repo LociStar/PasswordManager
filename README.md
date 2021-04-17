@@ -11,7 +11,10 @@ FXPM is the working directory for maven.
 To start the PM use maven-command "javafx:run -X -f pom.xml" in FXPM
 <br /><br />
 **Informations:**<br />
-The default password is "test".
+latest (pre-) release: v1.0.0-beta<br />
+Installation: <br />
+1. start Passwordmanager.jar
+2. start PasswordManager.jar again, to start the program. (system tray)
 
 To automatically write username + TAB + password to the according program, press STRG+ALT+A.<br />
 To only write the password, press STRG+ALT+Y.
