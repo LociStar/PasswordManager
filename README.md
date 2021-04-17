@@ -23,7 +23,7 @@ Installation: <br />
 2. start PasswordManager.jar again, to start the program. (system tray)
 
 To automatically write username + TAB + password to the according program, press STRG+ALT+A.<br />
-To only write the password, press STRG+ALT+Y.
+To only write the password, press STRG+ALT+Y.<br />
 To create a new entry press STRG+ALT+X
 
 For less memory usage, use -XX:+UseG1GC as JVM option.
