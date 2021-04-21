@@ -29,9 +29,10 @@ public class AddEntryDialogController {
 
     @FXML
     void btnAddClicked(ActionEvent event) {
-        FileCrypt.addPwToDatabase(username.getText(), password.getText(), masterPassword.getPassword(), pName.getText(), nickname.getText(), db);
-        masterPassword.clearPasswordCache();
-
+        if (!(password.getText().equals("") && pName.getText().equals(""))) {
+            FileCrypt.addPwToDatabase(username.getText(), password.getText(), masterPassword.getPassword(), pName.getText(), nickname.getText(), db);
+            masterPassword.clearPasswordCache();
+        }
         closeStage(event);
     }
 
