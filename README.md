@@ -17,7 +17,7 @@ To start the PM use maven-command "javafx:run -X -f pom.xml" in FXPM
 **Informations:**<br />
 Checkout the [Wiki](https://github.com/LociStar/PasswordManager/wiki)
 
-latest (pre-) release: v1.0.0-alpha<br />
+latest (pre-) release: v1.0.1-alpha<br />
 Installation: <br />
 1. start Passwordmanager.jar
 2. start PasswordManager.jar again, to start the program. (system tray)
