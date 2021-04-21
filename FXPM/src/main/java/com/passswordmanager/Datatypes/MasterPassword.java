@@ -5,17 +5,20 @@ import org.identityconnectors.common.security.GuardedString;
 import java.security.SecureRandom;
 
 public class MasterPassword {
+    private boolean empty;
     private char[] password;
     private GuardedString guardedString;
 
     public MasterPassword(char[] password) {
         this.guardedString = new GuardedString(password);
         clearChar(password);
+        empty = false;
     }
 
     public void generateGuardedString(char[] password) {
         this.guardedString = new GuardedString(password);
         clearChar(password);
+        empty = false;
     }
 
     public void clearChar(char[] password) {
@@ -38,6 +41,7 @@ public class MasterPassword {
 
     public void clearGuardedString() {
         this.guardedString.dispose();
+        empty = true;
     }
 
     /**
@@ -55,4 +59,7 @@ public class MasterPassword {
         return String.valueOf(this.password);
     }
 
+    public boolean isEmpty() {
+        return empty;
+    }
 }
