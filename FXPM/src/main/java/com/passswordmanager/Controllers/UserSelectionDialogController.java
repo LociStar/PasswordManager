@@ -46,7 +46,7 @@ public class UserSelectionDialogController {
         password.setCellValueFactory(new PropertyValueFactory<>("password"));
 
         table.getColumns().add(username);
-        table.getColumns().add(password);
+        //table.getColumns().add(password);
 
         table.setItems(FXCollections.observableArrayList(accountList));
         table.getSelectionModel().select(0);
@@ -87,7 +87,6 @@ public class UserSelectionDialogController {
                         FileCrypt.decryptText(table.getSelectionModel().getSelectedItem().getPassword(), masterPassword.getPassword()));
             }
             masterPassword.clearPasswordCache();
-            closeStage(keyEvent);
         }
     }
 
