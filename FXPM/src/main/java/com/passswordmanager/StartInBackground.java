@@ -66,6 +66,8 @@ public class StartInBackground extends Application {
             InstallUIController installUIController = loaderLP.getController();
             installUIController.setDatabasePath(System.getenv("APPDATA") + "\\PasswordManager");
             Scene scene = new Scene(parent);
+            stage.setTitle("PasswordManager");
+            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
             stage.setOnCloseRequest(event -> {
                 Platform.exit();
                 System.exit(0);
@@ -166,7 +168,7 @@ public class StartInBackground extends Application {
             File imageLoc = new File(
                     iconImageLoc
             );
-            java.awt.Image image = ImageIO.read(imageLoc);
+            java.awt.Image image = ImageIO.read(Main.class.getResource("/icon.jpeg"));
             java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(image);
             trayIcon.setImageAutoSize(true);
 
