@@ -27,9 +27,9 @@
       </HBox>
       <HBox alignment="CENTER" minWidth="140.0" prefHeight="50.0">
          <children>
-            <Label minWidth="140.0" text="Password reset time:" HBox.hgrow="NEVER">
+            <Label minWidth="140.0" text="Password reset time (ms):" HBox.hgrow="NEVER">
                <HBox.margin>
-                  <Insets left="10.0" />
+                  <Insets left="10.0"/>
                </HBox.margin>
             </Label>
             <TextField fx:id="resetTimeField" minWidth="149.0" HBox.hgrow="ALWAYS">
