@@ -13,7 +13,6 @@ import java.util.Map;
 public class DatabaseConnectionHandler {
     private String url = "jdbc:h2:file:C:/data/passwordManager;mode=MySQL";
     private final String user = "sa";
-
     private Connection con;
     private Statement st;
 
@@ -96,7 +95,6 @@ public class DatabaseConnectionHandler {
             st.execute("DELETE FROM ProgramName WHERE name NOT IN (SELECT pName FROM Password WHERE pName is NOT NULL);");
         } catch (SQLException sqlException) {
             System.out.println("Delete Error: " + sqlException.getErrorCode());
-            sqlException.printStackTrace();
         }
     }
 
@@ -155,10 +153,10 @@ public class DatabaseConnectionHandler {
                 //add Passwords to List
                 program.setTitle(resultSet.getString("name"));
             }
-            ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE pName='" + program.getTitle() + "';");
+            ResultSet rs = st.executeQuery("SELECT pw FROM Password WHERE username='" + username + "' AND pName='" + program.getTitle() + "';");
             while (rs.next()) {
-                //add Passwords to List
-                account = new Account(username, rs.getString("pw"));
+                //add Passwords
+                account.setPassword(rs.getString("pw"));
             }
         } catch (SQLException sqlException) {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());

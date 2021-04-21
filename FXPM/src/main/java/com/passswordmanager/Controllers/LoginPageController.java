@@ -3,10 +3,12 @@ package com.passswordmanager.Controllers;
 import com.lambdaworks.crypto.SCryptUtil;
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.MasterPassword;
+import com.passswordmanager.StartInBackground;
 import com.passswordmanager.Util.Config;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -49,6 +51,8 @@ public class LoginPageController {
             passwordListController.setMasterPassword(this.masterPassword);
             masterPassword.clearPasswordCache();
             stage = passwordStage;
+            stage.setTitle("PasswordManager");
+            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
             this.locked = false;
             stage.show();
         } else {

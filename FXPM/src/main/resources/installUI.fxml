@@ -27,7 +27,7 @@
         </HBox>
         <HBox alignment="CENTER" minWidth="140.0" prefHeight="50.0">
             <children>
-                <Label minWidth="140.0" text="Password reset time:" HBox.hgrow="NEVER">
+                <Label minWidth="140.0" text="Password reset time (ms):" HBox.hgrow="NEVER">
                     <HBox.margin>
                         <Insets left="10.0" />
                     </HBox.margin>
@@ -65,7 +65,7 @@
         </HBox>
       <HBox alignment="CENTER" minWidth="140.0" prefHeight="50.0">
          <children>
-            <Label minWidth="140.0" text="Confrim Master Password:" HBox.hgrow="NEVER">
+            <Label minWidth="140.0" text="Confirm Master Password:" HBox.hgrow="NEVER">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

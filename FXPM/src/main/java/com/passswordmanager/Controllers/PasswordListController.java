@@ -4,6 +4,7 @@ import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.Account;
 import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
+import com.passswordmanager.StartInBackground;
 import com.passswordmanager.Util.Config;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
@@ -21,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -194,6 +196,8 @@ public class PasswordListController implements NativeKeyListener {
         dialogController.setPNameText(pName);
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
+        stage.setTitle("PasswordManager");
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
@@ -214,9 +218,13 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     @Override
-    public void nativeKeyPressed(NativeKeyEvent e) {
+    public void nativeKeyReleased(NativeKeyEvent e) {
         if (STRG_ALT_A(e)) return;
         if (STRG_ALT_Y(e)) return;
+    }
+
+    @Override
+    public void nativeKeyPressed(NativeKeyEvent e) {
         STRG_ALT_X(e);
     }
 
@@ -224,11 +232,12 @@ public class PasswordListController implements NativeKeyListener {
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_X) {
-            if (masterPassword.getPassword().equals("")) {
-                masterPassword.clearPasswordCache();
+
+            if (masterPassword == null || masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
                 return;
             }
+
             masterPassword.clearPasswordCache();
             String activeWindow = getActiveWindow();
 
@@ -247,11 +256,12 @@ public class PasswordListController implements NativeKeyListener {
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_Y) {
-            if (masterPassword.getPassword().equals("")) {
-                masterPassword.clearPasswordCache();
+
+            if (masterPassword == null || masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
                 return true;
             }
+
             masterPassword.clearPasswordCache();
             String activeWindow = getActiveWindow();
 
@@ -278,11 +288,12 @@ public class PasswordListController implements NativeKeyListener {
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_A) {
             e.setKeyCode(0);
-            if (masterPassword.getPassword().equals("")) {
-                masterPassword.clearPasswordCache();
+
+            if (masterPassword == null || masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
                 return true;
             }
+
             masterPassword.clearPasswordCache();
             String activeWindow = getActiveWindow();
             Program program = db.getPasswords(activeWindow);
@@ -296,9 +307,7 @@ public class PasswordListController implements NativeKeyListener {
 
             Account account = program.getPasswords().get(0);
 
-            sendKeys(account.getUsername());
-            sendKeys("\t");
-            sendKeys(FileCrypt.decryptText(account.getPassword(), masterPassword.getPassword()));
+            sendKeys(account.getUsername() + "\t" + FileCrypt.decryptText(account.getPassword(), masterPassword.getPassword()));
             masterPassword.clearPasswordCache();
             return true;
         }
@@ -325,17 +334,21 @@ public class PasswordListController implements NativeKeyListener {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setAlwaysOnTop(true);
         stage.setScene(scene);
+        stage.setTitle("PasswordManager");
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
         stage.showAndWait();
     }
 
     void sendKeys(String keys) {
-        try {
-            Keyboard keyboard = new Keyboard();
-            keyboard.type(keys);
-            keyboard.release(keys);
-        } catch (AWTException | InterruptedException awtException) {
-            awtException.printStackTrace();
-        }
+        Thread thread = new Thread(() -> {
+            try {
+                Keyboard keyboard = new Keyboard(true);
+                keyboard.type(keys);
+            } catch (AWTException | InterruptedException awtException) {
+                awtException.printStackTrace();
+            }
+        });
+        thread.start();
     }
 
     public String getActiveWindow() {
@@ -345,11 +358,6 @@ public class PasswordListController implements NativeKeyListener {
         User32.INSTANCE.GetWindowText(hwnd, buffer, MAX_TITLE_LENGTH);
         System.out.println("Active window title: " + Native.toString(buffer));
         return Native.toString(buffer);
-    }
-
-    @Override
-    public void nativeKeyReleased(NativeKeyEvent e) {
-
     }
 
     private static FXMLLoader loadFXML(String fxml) {
@@ -376,6 +384,8 @@ public class PasswordListController implements NativeKeyListener {
         assert parent != null;
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
+        stage.setTitle("PasswordManager");
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
         SettingsUIController settingsUIController = fxmlLoader.getController();
         settingsUIController.setConfig(this.config);
         settingsUIController.loadConfig();
