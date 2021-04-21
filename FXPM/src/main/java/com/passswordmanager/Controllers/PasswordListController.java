@@ -4,6 +4,7 @@ import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.Account;
 import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
+import com.passswordmanager.StartInBackground;
 import com.passswordmanager.Util.Config;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
@@ -21,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -194,6 +196,8 @@ public class PasswordListController implements NativeKeyListener {
         dialogController.setPNameText(pName);
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
+        stage.setTitle("PasswordManager");
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
@@ -330,6 +334,8 @@ public class PasswordListController implements NativeKeyListener {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setAlwaysOnTop(true);
         stage.setScene(scene);
+        stage.setTitle("PasswordManager");
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
         stage.showAndWait();
     }
 
@@ -378,6 +384,8 @@ public class PasswordListController implements NativeKeyListener {
         assert parent != null;
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
+        stage.setTitle("PasswordManager");
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
         SettingsUIController settingsUIController = fxmlLoader.getController();
         settingsUIController.setConfig(this.config);
         settingsUIController.loadConfig();

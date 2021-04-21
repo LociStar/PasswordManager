@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -31,7 +32,7 @@ public class StartInBackground extends Application {
     // one icon location is shared between the application tray icon and task bar icon.
     // you could also use multiple icons to allow for clean display of tray icons on hi-dpi devices.
     private static final String iconImageLoc = StartInBackground.class.getResource("/icon.jpeg").getPath();
-            //"https://icons.iconarchive.com/icons/icons8/ios7/16/User-Interface-Password-icon.png";
+    //"https://icons.iconarchive.com/icons/icons8/ios7/16/User-Interface-Password-icon.png";
 
     // application stage is stored so that it can be shown and hidden based on system tray icon operations.
     private Stage passwordStage;
@@ -91,6 +92,8 @@ public class StartInBackground extends Application {
             scene.setFill(Color.TRANSPARENT);
 
             stage.setScene(scene);
+            stage.setTitle("PasswordManager");
+            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
 
             //load second fxml
             FXMLLoader loaderPL = loadFXML("passwordListUI");
@@ -190,7 +193,7 @@ public class StartInBackground extends Application {
                 Platform.runLater(() -> {
                     passwordStage.close();
                     if (loginPageController.getMasterPassword() != null)
-                    loginPageController.getMasterPassword().clearGuardedString();
+                        loginPageController.getMasterPassword().clearGuardedString();
                     loginStage.close();
                 });
                 Platform.exit();
@@ -211,16 +214,17 @@ public class StartInBackground extends Application {
                         @Override
                         public void run() {
                             javax.swing.SwingUtilities.invokeLater(() -> {
-                                        if (!loginPageController.isLocked()) {
-                                            trayIcon.displayMessage(
-                                                    "State",
-                                                    "Password Manager locked",
-                                                    java.awt.TrayIcon.MessageType.INFO
-                                            );
-                                            //Password reset
-                                            loginPageController.passwordField.setText("");
-                                            loginPageController.resetPassword();
-                                            loginPageController.getPasswordListController().accordion.getPanes().removeAll(loginPageController.getPasswordListController().accordion.getPanes());
+                                if (loginPageController == null) return;
+                                if (!loginPageController.isLocked()) {
+                                    trayIcon.displayMessage(
+                                            "State",
+                                            "Password Manager locked",
+                                            java.awt.TrayIcon.MessageType.INFO
+                                    );
+                                    //Password reset
+                                    loginPageController.passwordField.setText("");
+                                    loginPageController.resetPassword();
+                                    loginPageController.getPasswordListController().accordion.getPanes().removeAll(loginPageController.getPasswordListController().accordion.getPanes());
                                         }
                                     }
                             );
