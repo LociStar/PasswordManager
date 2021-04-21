@@ -110,6 +110,9 @@
                     <release>${maven.compiler.release}</release>
                     <source>14</source>
                     <target>14</target>
+                    <excludes>
+                        <exclude>com/passswordmanager/TestMain/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
