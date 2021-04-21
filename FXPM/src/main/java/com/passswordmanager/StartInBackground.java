@@ -111,7 +111,7 @@ public class StartInBackground extends Application {
         }
     }
 
-    private void exit(WindowEvent event){
+    private void exit(WindowEvent event) {
         System.exit(0);
     }
 
@@ -210,16 +210,17 @@ public class StartInBackground extends Application {
                         @Override
                         public void run() {
                             javax.swing.SwingUtilities.invokeLater(() -> {
-                                        trayIcon.displayMessage(
-                                                "State",
-                                                "Password Manager locked",
-                                                java.awt.TrayIcon.MessageType.INFO
-                                        );
-                                        //Password reset
-                                        loginPageController.passwordField.setText("");
-                                        loginPageController.resetPassword();
-                                        loginPageController.getPasswordListController().accordion.getPanes().removeAll(loginPageController.getPasswordListController().accordion.getPanes());
-
+                                        if (!loginPageController.isLocked()) {
+                                            trayIcon.displayMessage(
+                                                    "State",
+                                                    "Password Manager locked",
+                                                    java.awt.TrayIcon.MessageType.INFO
+                                            );
+                                            //Password reset
+                                            loginPageController.passwordField.setText("");
+                                            loginPageController.resetPassword();
+                                            loginPageController.getPasswordListController().accordion.getPanes().removeAll(loginPageController.getPasswordListController().accordion.getPanes());
+                                        }
                                     }
                             );
                         }
