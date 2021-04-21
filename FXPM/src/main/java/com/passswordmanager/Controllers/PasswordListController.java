@@ -197,7 +197,7 @@ public class PasswordListController implements NativeKeyListener {
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         stage.setTitle("PasswordManager");
-        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
@@ -335,7 +335,7 @@ public class PasswordListController implements NativeKeyListener {
         stage.setAlwaysOnTop(true);
         stage.setScene(scene);
         stage.setTitle("PasswordManager");
-        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
         stage.showAndWait();
     }
 
@@ -385,7 +385,7 @@ public class PasswordListController implements NativeKeyListener {
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         stage.setTitle("PasswordManager");
-        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
         SettingsUIController settingsUIController = fxmlLoader.getController();
         settingsUIController.setConfig(this.config);
         settingsUIController.loadConfig();

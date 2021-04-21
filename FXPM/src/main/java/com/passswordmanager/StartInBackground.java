@@ -67,7 +67,7 @@ public class StartInBackground extends Application {
             installUIController.setDatabasePath(System.getenv("APPDATA") + "\\PasswordManager");
             Scene scene = new Scene(parent);
             stage.setTitle("PasswordManager");
-            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
+            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
             stage.setOnCloseRequest(event -> {
                 Platform.exit();
                 System.exit(0);
@@ -95,7 +95,7 @@ public class StartInBackground extends Application {
 
             stage.setScene(scene);
             stage.setTitle("PasswordManager");
-            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
+            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
 
             //load second fxml
             FXMLLoader loaderPL = loadFXML("passwordListUI");
@@ -165,7 +165,7 @@ public class StartInBackground extends Application {
 
             // set up a system tray icon.
             java.awt.SystemTray tray = java.awt.SystemTray.getSystemTray();
-            java.awt.Image image = ImageIO.read(Main.class.getResource("/icon.jpeg"));
+            java.awt.Image image = ImageIO.read(Main.class.getResource("/icon.png"));
             java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(image);
             trayIcon.setImageAutoSize(true);
 
