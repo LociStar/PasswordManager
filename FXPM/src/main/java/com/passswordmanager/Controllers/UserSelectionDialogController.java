@@ -53,12 +53,15 @@ public class UserSelectionDialogController {
     }
 
     void sendKeys(String keys) {
-        try {
-            Keyboard keyboard = new Keyboard();
-            keyboard.type(keys);
-        } catch (AWTException | InterruptedException awtException) {
-            awtException.printStackTrace();
-        }
+        Thread thread = new Thread(() -> {
+            try {
+                Keyboard keyboard = new Keyboard(false);
+                keyboard.type(keys);
+            } catch (AWTException | InterruptedException awtException) {
+                awtException.printStackTrace();
+            }
+        });
+        thread.start();
     }
 
     private void hideStage(Event event) {
@@ -77,11 +80,12 @@ public class UserSelectionDialogController {
     public void onKeyReleased(KeyEvent keyEvent) {
         if (keyEvent.getCode().equals(KeyCode.ENTER)) {
             closeStage(keyEvent);
-            if (!onlyPassword) {
-                sendKeys(table.getSelectionModel().getSelectedItem().getUsername());
-                sendKeys("\t");
+            if (onlyPassword) {
+                sendKeys(FileCrypt.decryptText(table.getSelectionModel().getSelectedItem().getPassword(), masterPassword.getPassword()));
+            } else {
+                sendKeys(table.getSelectionModel().getSelectedItem().getUsername() + "\t" +
+                        FileCrypt.decryptText(table.getSelectionModel().getSelectedItem().getPassword(), masterPassword.getPassword()));
             }
-            sendKeys(FileCrypt.decryptText(table.getSelectionModel().getSelectedItem().getPassword(), masterPassword.getPassword()));
             masterPassword.clearPasswordCache();
             closeStage(keyEvent);
         }

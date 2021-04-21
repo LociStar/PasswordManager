@@ -215,8 +215,6 @@ public class PasswordListController implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        if (STRG_ALT_A(e)) return;
-        if (STRG_ALT_Y(e)) return;
         STRG_ALT_X(e);
     }
 
@@ -296,9 +294,7 @@ public class PasswordListController implements NativeKeyListener {
 
             Account account = program.getPasswords().get(0);
 
-            sendKeys(account.getUsername());
-            sendKeys("\t");
-            sendKeys(FileCrypt.decryptText(account.getPassword(), masterPassword.getPassword()));
+            sendKeys(account.getUsername() + "\t" + FileCrypt.decryptText(account.getPassword(), masterPassword.getPassword()));
             masterPassword.clearPasswordCache();
             return true;
         }
@@ -329,13 +325,15 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     void sendKeys(String keys) {
-        try {
-            Keyboard keyboard = new Keyboard();
-            keyboard.type(keys);
-            keyboard.release(keys);
-        } catch (AWTException | InterruptedException awtException) {
-            awtException.printStackTrace();
-        }
+        Thread thread = new Thread(() -> {
+            try {
+                Keyboard keyboard = new Keyboard(true);
+                keyboard.type(keys);
+            } catch (AWTException | InterruptedException awtException) {
+                awtException.printStackTrace();
+            }
+        });
+        thread.start();
     }
 
     public String getActiveWindow() {
@@ -349,7 +347,8 @@ public class PasswordListController implements NativeKeyListener {
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
-
+        if (STRG_ALT_A(e)) return;
+        if (STRG_ALT_Y(e)) return;
     }
 
     private static FXMLLoader loadFXML(String fxml) {
