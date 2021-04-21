@@ -214,6 +214,12 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     @Override
+    public void nativeKeyReleased(NativeKeyEvent e) {
+        if (STRG_ALT_A(e)) return;
+        if (STRG_ALT_Y(e)) return;
+    }
+
+    @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         STRG_ALT_X(e);
     }
@@ -222,11 +228,12 @@ public class PasswordListController implements NativeKeyListener {
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_X) {
-            if (masterPassword.getPassword().equals("")) {
-                masterPassword.clearPasswordCache();
+
+            if (masterPassword == null ||masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
                 return;
             }
+
             masterPassword.clearPasswordCache();
             String activeWindow = getActiveWindow();
 
@@ -245,11 +252,12 @@ public class PasswordListController implements NativeKeyListener {
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_Y) {
-            if (masterPassword.getPassword().equals("")) {
-                masterPassword.clearPasswordCache();
+
+            if (masterPassword == null ||masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
                 return true;
             }
+
             masterPassword.clearPasswordCache();
             String activeWindow = getActiveWindow();
 
@@ -276,11 +284,12 @@ public class PasswordListController implements NativeKeyListener {
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_A) {
             e.setKeyCode(0);
-            if (masterPassword.getPassword().equals("")) {
-                masterPassword.clearPasswordCache();
+
+            if (masterPassword == null ||masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
                 return true;
             }
+
             masterPassword.clearPasswordCache();
             String activeWindow = getActiveWindow();
             Program program = db.getPasswords(activeWindow);
@@ -343,12 +352,6 @@ public class PasswordListController implements NativeKeyListener {
         User32.INSTANCE.GetWindowText(hwnd, buffer, MAX_TITLE_LENGTH);
         System.out.println("Active window title: " + Native.toString(buffer));
         return Native.toString(buffer);
-    }
-
-    @Override
-    public void nativeKeyReleased(NativeKeyEvent e) {
-        if (STRG_ALT_A(e)) return;
-        if (STRG_ALT_Y(e)) return;
     }
 
     private static FXMLLoader loadFXML(String fxml) {
