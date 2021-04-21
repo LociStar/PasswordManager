@@ -229,7 +229,7 @@ public class PasswordListController implements NativeKeyListener {
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_X) {
 
-            if (masterPassword == null ||masterPassword.isEmpty()) {
+            if (masterPassword == null || masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
                 return;
             }
@@ -253,7 +253,7 @@ public class PasswordListController implements NativeKeyListener {
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
                 && e.getKeyCode() == NativeKeyEvent.VC_Y) {
 
-            if (masterPassword == null ||masterPassword.isEmpty()) {
+            if (masterPassword == null || masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
                 return true;
             }
@@ -285,7 +285,7 @@ public class PasswordListController implements NativeKeyListener {
                 && e.getKeyCode() == NativeKeyEvent.VC_A) {
             e.setKeyCode(0);
 
-            if (masterPassword == null ||masterPassword.isEmpty()) {
+            if (masterPassword == null || masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
                 return true;
             }
