@@ -11,8 +11,8 @@ import java.util.Map;
 
 
 public class DatabaseConnectionHandler {
-    private String url = "jdbc:h2:file:C:/data/passwordManager;mode=MySQL";
     private final String user = "sa";
+    private String url = "jdbc:h2:file:C:/data/passwordManager;mode=MySQL";
     private Connection con;
     private Statement st;
 
@@ -240,5 +240,32 @@ public class DatabaseConnectionHandler {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
         }
         return true;
+    }
+
+    public void setKeyBehaviour(String behaviour) {
+        try {
+            //for backwards compatibility
+            st.execute("ALTER TABLE ProgramName ADD keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
+
+            st.execute("UPDATE name SET keyBehaviour='" + behaviour + "';");
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+    }
+
+    public String getKeyBehaviour(String pName) {
+        try {
+            //for backwards compatibility
+            st.execute("ALTER TABLE ProgramName ADD keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
+
+            ResultSet rs = st.executeQuery("SELECT keyBehaviour FROM ProgramName WHERE pName='" + pName + "';");
+            while (rs.next()) {
+                //add Passwords to List
+                pName = rs.getString("keyBehaviour");
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+        return pName;
     }
 }
