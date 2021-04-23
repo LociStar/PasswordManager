@@ -12,6 +12,7 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -159,12 +161,28 @@ public class PasswordListController implements NativeKeyListener {
 
         tableView.setItems(data);
 
-        return new TitledPane(label, tableView);
+        TitledPane titledPane = new TitledPane(label, tableView);
+        Button button = new Button();
+        button.setText("Setting");
+        button.setOnAction(actionEvent -> onPNameSettingPressed());
+        titledPane.setGraphic(button);
+        titledPane.setContentDisplay(ContentDisplay.RIGHT);
+
+        final double graphicMarginRight = 15; //change it, if needed
+        button.translateXProperty().bind(Bindings.createDoubleBinding(
+                () -> titledPane.getWidth() - button.getLayoutX() - button.getWidth() - graphicMarginRight,
+                titledPane.widthProperty())
+        );
+
+        return titledPane;
+    }
+
+    private void onPNameSettingPressed() {
+
     }
 
     private void onTableViewClickBehaviour(TableView<Account> tableView) {
         try {
-
             TableView<Account> tableView1 = (TableView<Account>) accordion.getExpandedPane().getContent();
             String pName = accordion.getExpandedPane().getText();
             Account account = tableView1.getSelectionModel().getSelectedItem();
