@@ -50,6 +50,8 @@ public class PasswordListController implements NativeKeyListener {
 
     private final int MAX_TITLE_LENGTH = config.getMAX_TITLE_LENGTH();
 
+    private final String icon = "/icon.png";
+
     /**
      * Constructor, creates the context menu for the table view
      */
@@ -197,7 +199,7 @@ public class PasswordListController implements NativeKeyListener {
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         stage.setTitle("PasswordManager");
-        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
@@ -335,7 +337,7 @@ public class PasswordListController implements NativeKeyListener {
         stage.setAlwaysOnTop(true);
         stage.setScene(scene);
         stage.setTitle("PasswordManager");
-        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
         stage.showAndWait();
     }
 
@@ -385,7 +387,7 @@ public class PasswordListController implements NativeKeyListener {
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         stage.setTitle("PasswordManager");
-        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
         SettingsUIController settingsUIController = fxmlLoader.getController();
         settingsUIController.setConfig(this.config);
         settingsUIController.loadConfig();

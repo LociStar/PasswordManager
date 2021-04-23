@@ -52,7 +52,7 @@ public class LoginPageController {
             masterPassword.clearPasswordCache();
             stage = passwordStage;
             stage.setTitle("PasswordManager");
-            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
+            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
             this.locked = false;
             stage.show();
         } else {
