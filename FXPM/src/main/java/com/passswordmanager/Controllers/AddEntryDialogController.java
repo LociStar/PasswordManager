@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -38,10 +39,17 @@ public class AddEntryDialogController {
     @FXML
     void btnAddClicked(ActionEvent event) {
         if (!(password.getText().equals("") && pName.getText().equals(""))) {
-            FileCrypt.addPwToDatabase(username.getText(), password.getText(), masterPassword.getPassword(), pName.getText(), nickname.getText(), db);
-            masterPassword.clearPasswordCache();
+            if (db.isValidNickname(nickname.getText())) {
+                FileCrypt.addPwToDatabase(username.getText(), password.getText(), masterPassword.getPassword(), pName.getText(), nickname.getText(), db);
+                masterPassword.clearPasswordCache();
+                closeStage(event);
+            } else {
+                nickname.setStyle("-fx-background-color: red");
+                nickname.setTooltip(new Tooltip("Nickname must be unique and cant be a ProgramName"));
+                nickname.getTooltip().show(nickname.getScene().getWindow());
+            }
         }
-        closeStage(event);
+
     }
 
     private void closeStage(ActionEvent event) {
