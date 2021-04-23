@@ -187,6 +187,7 @@ public class PasswordListController implements NativeKeyListener {
             settingUIController.setOldPName(db.getPName(label));
             settingUIController.getTitle().setText(db.getPName(label));
             settingUIController.getNickname().setText(db.getNickname(label));
+            settingUIController.setOldNickname(db.getNickname(label));
             settingUIController.getKeyShortCut().setText(db.getKeyBehaviour(db.getPName(label)));
             showStage(parent);
             loadTable(masterPassword.getPassword());
@@ -212,6 +213,7 @@ public class PasswordListController implements NativeKeyListener {
             dialogController.setPNameText(db.getPName(pName));
             dialogController.getpName().setDisable(true);
             dialogController.setNickname(db.getNickname(pName));
+            dialogController.setOldNickname(db.getNickname(pName));
             dialogController.getNickname().setDisable(true);
             dialogController.setUsername(account.getUsername());
             dialogController.setDescription("Password Entry Setting");

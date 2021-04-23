@@ -2,11 +2,16 @@ package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Util.KeyShortCutUtil;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class ProgramSettingUIController {
     @FXML
@@ -18,19 +23,39 @@ public class ProgramSettingUIController {
 
     private DatabaseConnectionHandler db;
     private String oldPName;
+    private String oldNickname;
+
+    public static void showOneTimeTooltip(Control control, String tooltipText) {
+
+        Point2D p = control.localToScreen(5, 5);
+
+        final Tooltip customTooltip = new Tooltip(tooltipText);
+        customTooltip.setAutoHide(false);
+        customTooltip.show(control, p.getX(), p.getY());
+
+        PauseTransition pt = new PauseTransition(Duration.millis(2000));
+        pt.setOnFinished(e -> {
+            customTooltip.hide();
+        });
+        pt.play();
+    }
 
     @FXML
     public void onConfirmPressed(ActionEvent actionEvent) {
         String nick = nickname.getText().equals(title.getText()) ? "" : nickname.getText();
         if (!KeyShortCutUtil.validate(keyShortCut.getText())) {
             keyShortCut.setStyle("-fx-background-color: red");
-            keyShortCut.getTooltip().show(keyShortCut.getScene().getWindow());
-            closeStage(actionEvent);
+            showOneTimeTooltip(nickname, keyShortCut.getTooltip().getText());
             return;
-        } else if (db.isValidNickname(nick)) {
+        } else if (!db.isValidProgramName(oldPName, title.getText())) {
+            showOneTimeTooltip(title, "ProgramName is already taken and cant be empty!");
+            return;
+        } else if (!db.isValidNickname(nick, oldNickname)) {
+            nickname.setStyle("-fx-border-color: red");
+            showOneTimeTooltip(nickname, "Nickname cant be a ProgramName and must be unique!");
+            return;
+        } else
             db.updateProgram(oldPName, title.getText(), nick, keyShortCut.getText());
-        }
-
         closeStage(actionEvent);
     }
 
@@ -70,5 +95,9 @@ public class ProgramSettingUIController {
 
     public void setOldPName(String oldPName) {
         this.oldPName = oldPName;
+    }
+
+    public void setOldNickname(String oldNickname) {
+        this.oldNickname = oldNickname;
     }
 }

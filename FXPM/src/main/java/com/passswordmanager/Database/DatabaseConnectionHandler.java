@@ -36,7 +36,8 @@ public class DatabaseConnectionHandler {
                 "\n" +
                 "PRIMARY KEY (id),\n" +
                 "CONSTRAINT FK FOREIGN KEY (pName) REFERENCES ProgramName (name)\n" +
-                ");";
+                "ON DELETE CASCADE \n" +
+                "ON UPDATE CASCADE);";
         try {
             this.con = DriverManager.getConnection(url, user, "");
             this.st = con.createStatement();
@@ -223,7 +224,8 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    public boolean isValidNickname(String nickname) {
+    public boolean isValidNickname(String nickname, String oldNickname) {
+        if (nickname.equals(oldNickname)) return true;
         if (nickname.equals("")) return true;
         try {
             ResultSet rs = st.executeQuery("SELECT name FROM ProgramName WHERE name='" + nickname + "';");
@@ -237,6 +239,26 @@ public class DatabaseConnectionHandler {
                 return false;
             }
 
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error: " + sqlException.getMessage());
+        }
+        return true;
+    }
+
+    public boolean isValidProgramName(String oldName, String pName) {
+        if (oldName.equals(pName)) return true;
+        if (pName.equals("")) return false;
+        try {
+            ResultSet rs = st.executeQuery("SELECT name FROM ProgramName WHERE name='" + pName + "';");
+            if (rs.next()) {
+                System.out.println("ProgramName already exists");
+                return false;
+            }
+            ResultSet rs2 = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + pName + "';");
+            if (rs2.next()) {
+                System.out.println("ProgramName cant be a Nickname");
+                return false;
+            }
         } catch (SQLException sqlException) {
             System.out.println("Select Error: " + sqlException.getMessage());
         }
@@ -279,11 +301,12 @@ public class DatabaseConnectionHandler {
                     "keyBehaviour='" + behaviour + "'" +
                     "WHERE name='" + oldName + "';");
 
-            st.execute("UPDATE Password " +
-                    "SET pName='" + newName + "'" +
-                    "WHERE pName='" + oldName + "';");
+//            st.execute("UPDATE Password " +
+//                    "SET pName='" + newName + "'" +
+//                    "WHERE pName='" + oldName + "';");
         } catch (SQLException sqlException) {
             System.out.println("Update Error: " + sqlException.getMessage());
         }
     }
+
 }

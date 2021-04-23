@@ -36,10 +36,12 @@ public class AddEntryDialogController {
 
     private DatabaseConnectionHandler db;
 
+    private String oldNickname;
+
     @FXML
     void btnAddClicked(ActionEvent event) {
         if (!(password.getText().equals("") && pName.getText().equals(""))) {
-            if (db.isValidNickname(nickname.getText())) {
+            if (db.isValidNickname(nickname.getText(), oldNickname)) {
                 FileCrypt.addPwToDatabase(username.getText(), password.getText(), masterPassword.getPassword(), pName.getText(), nickname.getText(), db);
                 masterPassword.clearPasswordCache();
                 closeStage(event);
@@ -109,6 +111,10 @@ public class AddEntryDialogController {
 
     public String getPasswordText() {
         return password.getText();
+    }
+
+    public void setOldNickname(String oldNickname) {
+        this.oldNickname = oldNickname;
     }
 }
 
