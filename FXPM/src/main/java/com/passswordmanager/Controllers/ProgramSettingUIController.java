@@ -35,6 +35,7 @@ public class ProgramSettingUIController {
 
         PauseTransition pt = new PauseTransition(Duration.millis(2000));
         pt.setOnFinished(e -> {
+            control.setStyle("");
             customTooltip.hide();
         });
         pt.play();
@@ -44,10 +45,12 @@ public class ProgramSettingUIController {
     public void onConfirmPressed(ActionEvent actionEvent) {
         String nick = nickname.getText().equals(title.getText()) ? "" : nickname.getText();
         if (!KeyShortCutUtil.validate(keyShortCut.getText())) {
-            keyShortCut.setStyle("-fx-background-color: red");
-            showOneTimeTooltip(nickname, keyShortCut.getTooltip().getText());
+            System.out.println(keyShortCut.getStyle());
+            keyShortCut.setStyle("-fx-border-color: red");
+            showOneTimeTooltip(keyShortCut, keyShortCut.getTooltip().getText());
             return;
         } else if (!db.isValidProgramName(oldPName, title.getText())) {
+            title.setStyle("-fx-border-color: red");
             showOneTimeTooltip(title, "ProgramName is already taken and cant be empty!");
             return;
         } else if (!db.isValidNickname(nick, oldNickname)) {
