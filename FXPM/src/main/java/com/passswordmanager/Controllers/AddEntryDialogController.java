@@ -6,11 +6,19 @@ import com.passswordmanager.Util.FileCrypt;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class AddEntryDialogController {
+    @FXML
+    public Text description;
+
+    @FXML
+    public Button button;
+
     @FXML
     private TextField pName;
 
@@ -57,6 +65,42 @@ public class AddEntryDialogController {
 
     public void setMasterPassword(MasterPassword masterPassword) {
         this.masterPassword = masterPassword;
+    }
+
+    public void setUsername(String username) {
+        this.username.setText(username);
+    }
+
+    public void setPassword(String password) {
+        this.password.setText(password);
+    }
+
+    public void setDescription(String text) {
+        this.description.setText(text);
+    }
+
+    public TextField getpName() {
+        return pName;
+    }
+
+    public TextField getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname.setText(nickname);
+    }
+
+    public Button getButton() {
+        return button;
+    }
+
+    public String getUsernameText() {
+        return username.getText();
+    }
+
+    public String getPasswordText() {
+        return password.getText();
     }
 }
 

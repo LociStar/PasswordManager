@@ -177,4 +177,34 @@ public class DatabaseConnectionHandler {
         }
         return new Program(pName, accounts);
     }
+
+    public String getNickname(String pName) {
+        String nickname = "";
+        try {
+            ResultSet rs = st.executeQuery("SELECT nickname FROM ProgramName WHERE name='" + pName + "';");
+            while (rs.next()) {
+                //add Passwords to List
+                nickname = rs.getString("nickname");
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+        return nickname;
+    }
+
+    public void updateEntry(String pName, String oldUsername, String newUsername, String password) {
+        try {
+            if (password == null)
+                st.execute("UPDATE Password " +
+                        "SET usernaem='" + newUsername + "'" +
+                        "password='" + password + "' " +
+                        "WHERE username='" + oldUsername + "' AND pName='" + pName + "';");
+            else
+                st.execute("UPDATE Password " +
+                        "SET username='" + newUsername + "'" +
+                        "WHERE username='" + oldUsername + "' AND pName='" + pName + "';");
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+    }
 }

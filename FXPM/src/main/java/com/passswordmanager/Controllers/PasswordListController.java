@@ -23,6 +23,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -39,18 +40,14 @@ import java.util.Map;
  * FXML Controller to control passwordListController.fxml
  */
 public class PasswordListController implements NativeKeyListener {
+    private final Config config = new Config();
+    private final int MAX_TITLE_LENGTH = config.getMAX_TITLE_LENGTH();
+    private final String icon = "/icon.png";
     @FXML
     public PasswordField passwordField;
     public Accordion accordion;
-
     private MasterPassword masterPassword;
     private DatabaseConnectionHandler db;
-
-    private final Config config = new Config();
-
-    private final int MAX_TITLE_LENGTH = config.getMAX_TITLE_LENGTH();
-
-    private final String icon = "/icon.png";
 
     /**
      * Constructor, creates the context menu for the table view
@@ -58,6 +55,10 @@ public class PasswordListController implements NativeKeyListener {
     public PasswordListController() {
 
 
+    }
+
+    private static FXMLLoader loadFXML(String fxml) {
+        return new FXMLLoader(AddEntryDialogController.class.getResource("/" + fxml + ".fxml"));
     }
 
     /**
@@ -132,8 +133,16 @@ public class PasswordListController implements NativeKeyListener {
 
     private TitledPane createTiltedPane(String name, String nickname, Map<String, String> list) {
         String label = nickname.equals("") ? name : nickname;
-
         TableView<Account> tableView = new TableView<>();
+
+        tableView.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                if (mouseEvent.getClickCount() == 2) {
+                    onTableViewClickBehaviour(tableView);
+                }
+            }
+        });
+
         TableColumn<Account, String> username = new TableColumn<>("username");
         TableColumn<Account, String> password = new TableColumn<>("password");
 
@@ -151,6 +160,52 @@ public class PasswordListController implements NativeKeyListener {
         tableView.setItems(data);
 
         return new TitledPane(label, tableView);
+    }
+
+    private void onTableViewClickBehaviour(TableView<Account> tableView) {
+        try {
+
+            TableView<Account> tableView1 = (TableView<Account>) accordion.getExpandedPane().getContent();
+            String pName = accordion.getExpandedPane().getText();
+            Account account = tableView1.getSelectionModel().getSelectedItem();
+
+            FXMLLoader fxmlLoader = loadFXML("addEntryDialog");
+            Parent parent = fxmlLoader.load();
+
+            AddEntryDialogController dialogController = fxmlLoader.getController();
+            dialogController.setMasterPassword(masterPassword);
+            dialogController.setDb(db);
+            dialogController.setPNameText(pName);
+            dialogController.getpName().setDisable(true);
+            dialogController.setNickname(db.getNickname(pName));
+            dialogController.getNickname().setDisable(true);
+            dialogController.setUsername(account.getUsername());
+            dialogController.setDescription("Password Entry Setting");
+
+            dialogController.getButton().setText("Confirm");
+            dialogController.getButton().setOnAction(actionEvent -> {
+                db.updateEntry(pName, account.getUsername(), dialogController.getUsernameText(), dialogController.getPasswordText());
+                account.setUsername(dialogController.getUsernameText());
+                hidePassword();
+                Stage stage = (Stage) dialogController.getButton().getScene().getWindow();
+                stage.close();
+            });
+            showStage(parent);
+            tableView.refresh();
+            masterPassword.clearPasswordCache();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showStage(Parent parent) {
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        stage.setTitle("PasswordManager");
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
     /**
@@ -196,13 +251,7 @@ public class PasswordListController implements NativeKeyListener {
         dialogController.setMasterPassword(this.masterPassword);
         dialogController.setDb(db);
         dialogController.setPNameText(pName);
-        Scene scene = new Scene(parent);
-        Stage stage = new Stage();
-        stage.setTitle("PasswordManager");
-        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setScene(scene);
-        stage.showAndWait();
+        showStage(parent);
         loadTable(masterPassword.getPassword());
         masterPassword.clearPasswordCache();
     }
@@ -360,10 +409,6 @@ public class PasswordListController implements NativeKeyListener {
         User32.INSTANCE.GetWindowText(hwnd, buffer, MAX_TITLE_LENGTH);
         System.out.println("Active window title: " + Native.toString(buffer));
         return Native.toString(buffer);
-    }
-
-    private static FXMLLoader loadFXML(String fxml) {
-        return new FXMLLoader(AddEntryDialogController.class.getResource("/" + fxml + ".fxml"));
     }
 
     public void resetPassword() {
