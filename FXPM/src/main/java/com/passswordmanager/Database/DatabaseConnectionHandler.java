@@ -245,7 +245,7 @@ public class DatabaseConnectionHandler {
     public void setKeyBehaviour(String behaviour) {
         try {
             //for backwards compatibility
-            st.execute("ALTER TABLE ProgramName ADD keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
+            st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
 
             st.execute("UPDATE name SET keyBehaviour='" + behaviour + "';");
         } catch (SQLException sqlException) {
@@ -256,9 +256,9 @@ public class DatabaseConnectionHandler {
     public String getKeyBehaviour(String pName) {
         try {
             //for backwards compatibility
-            st.execute("ALTER TABLE ProgramName ADD keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
+            st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
 
-            ResultSet rs = st.executeQuery("SELECT keyBehaviour FROM ProgramName WHERE pName='" + pName + "';");
+            ResultSet rs = st.executeQuery("SELECT keyBehaviour FROM ProgramName WHERE name='" + pName + "';");
             while (rs.next()) {
                 //add Passwords to List
                 pName = rs.getString("keyBehaviour");
