@@ -164,7 +164,7 @@ public class PasswordListController implements NativeKeyListener {
         TitledPane titledPane = new TitledPane(label, tableView);
         Button button = new Button();
         button.setText("Setting");
-        button.setOnAction(actionEvent -> onPNameSettingPressed(actionEvent, label));
+        button.setOnAction(actionEvent -> onPNameSettingPressed(label));
         titledPane.setGraphic(button);
         titledPane.setContentDisplay(ContentDisplay.RIGHT);
 
@@ -177,16 +177,20 @@ public class PasswordListController implements NativeKeyListener {
         return titledPane;
     }
 
-    private void onPNameSettingPressed(ActionEvent actionEvent, String label) {
+    private void onPNameSettingPressed(String label) {
         try {
             FXMLLoader fxmlLoader = loadFXML("programSettingUI");
             Parent parent = fxmlLoader.load();
 
             ProgramSettingUIController settingUIController = fxmlLoader.getController();
+            settingUIController.setDb(db);
+            settingUIController.setOldPName(db.getPName(label));
             settingUIController.getTitle().setText(db.getPName(label));
             settingUIController.getNickname().setText(db.getNickname(label));
-            settingUIController.getKeyShortCut().setText("DEMO");
+            settingUIController.getKeyShortCut().setText(db.getKeyBehaviour(db.getPName(label)));
             showStage(parent);
+            loadTable(masterPassword.getPassword());
+            masterPassword.clearPasswordCache();
 
         } catch (IOException ignored) {
             System.out.println("onPNameSettingPressed Error");

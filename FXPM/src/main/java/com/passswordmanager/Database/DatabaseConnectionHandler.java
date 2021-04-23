@@ -211,7 +211,7 @@ public class DatabaseConnectionHandler {
         try {
             if (password == null)
                 st.execute("UPDATE Password " +
-                        "SET usernaem='" + newUsername + "'" +
+                        "SET usernaem='" + newUsername + "', " +
                         "password='" + password + "' " +
                         "WHERE username='" + oldUsername + "' AND pName='" + pName + "';");
             else
@@ -224,6 +224,7 @@ public class DatabaseConnectionHandler {
     }
 
     public boolean isValidNickname(String nickname) {
+        if (nickname.equals("")) return true;
         try {
             ResultSet rs = st.executeQuery("SELECT name FROM ProgramName WHERE name='" + nickname + "';");
             if (rs.next()) {
@@ -237,7 +238,7 @@ public class DatabaseConnectionHandler {
             }
 
         } catch (SQLException sqlException) {
-            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+            System.out.println("Select Error: " + sqlException.getMessage());
         }
         return true;
     }
@@ -247,9 +248,9 @@ public class DatabaseConnectionHandler {
             //for backwards compatibility
             st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
 
-            st.execute("UPDATE name SET keyBehaviour='" + behaviour + "';");
+            st.execute("UPDATE ProgramName SET keyBehaviour='" + behaviour + "';");
         } catch (SQLException sqlException) {
-            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+            System.out.println("Update Error: " + sqlException.getMessage());
         }
     }
 
@@ -267,5 +268,22 @@ public class DatabaseConnectionHandler {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
         }
         return pName;
+    }
+
+    public void updateProgram(String oldName, String newName, String newNickname, String behaviour) {
+        try {
+            //for backwards compatibility
+            st.execute("UPDATE ProgramName " +
+                    "SET name='" + newName + "', " +
+                    "nickname='" + newNickname + "', " +
+                    "keyBehaviour='" + behaviour + "'" +
+                    "WHERE name='" + oldName + "';");
+
+            st.execute("UPDATE Password " +
+                    "SET pName='" + newName + "'" +
+                    "WHERE pName='" + oldName + "';");
+        } catch (SQLException sqlException) {
+            System.out.println("Update Error: " + sqlException.getMessage());
+        }
     }
 }
