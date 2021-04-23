@@ -178,7 +178,18 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     private void onPNameSettingPressed() {
+        try {
+            TitledPane pane = accordion.getExpandedPane();
+            FXMLLoader fxmlLoader = loadFXML("programSettingUI");
+            Parent parent = fxmlLoader.load();
 
+            ProgramSettingUIController settingUIController = fxmlLoader.getController();
+            settingUIController.getTitle().setText(pane.getText());
+            showStage(parent);
+
+        } catch (IOException ignored) {
+            System.out.println("onPNameSettingPressed Error");
+        }
     }
 
     private void onTableViewClickBehaviour(TableView<Account> tableView) {
@@ -211,8 +222,8 @@ public class PasswordListController implements NativeKeyListener {
             showStage(parent);
             tableView.refresh();
             masterPassword.clearPasswordCache();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
+            System.out.println("onTableViewClickBehaviour Error");
         }
     }
 
