@@ -222,4 +222,23 @@ public class DatabaseConnectionHandler {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
         }
     }
+
+    public boolean isValidNickname(String nickname) {
+        try {
+            ResultSet rs = st.executeQuery("SELECT name FROM ProgramName WHERE name='" + nickname + "';");
+            if (rs.next()) {
+                System.out.println("nickname cannot be a ProgramName");
+                return false;
+            }
+            ResultSet rs2 = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nickname + "';");
+            if (rs2.next()) {
+                System.out.println("Nickname already exits");
+                return false;
+            }
+
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+        return true;
+    }
 }

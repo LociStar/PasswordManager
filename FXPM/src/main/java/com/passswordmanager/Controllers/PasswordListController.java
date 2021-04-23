@@ -164,7 +164,7 @@ public class PasswordListController implements NativeKeyListener {
         TitledPane titledPane = new TitledPane(label, tableView);
         Button button = new Button();
         button.setText("Setting");
-        button.setOnAction(actionEvent -> onPNameSettingPressed());
+        button.setOnAction(actionEvent -> onPNameSettingPressed(actionEvent, label));
         titledPane.setGraphic(button);
         titledPane.setContentDisplay(ContentDisplay.RIGHT);
 
@@ -177,14 +177,15 @@ public class PasswordListController implements NativeKeyListener {
         return titledPane;
     }
 
-    private void onPNameSettingPressed() {
+    private void onPNameSettingPressed(ActionEvent actionEvent, String label) {
         try {
-            TitledPane pane = accordion.getExpandedPane();
             FXMLLoader fxmlLoader = loadFXML("programSettingUI");
             Parent parent = fxmlLoader.load();
 
             ProgramSettingUIController settingUIController = fxmlLoader.getController();
-            settingUIController.getTitle().setText(pane.getText());
+            settingUIController.getTitle().setText(db.getPName(label));
+            settingUIController.getNickname().setText(db.getNickname(label));
+            settingUIController.getKeyShortCut().setText("DEMO");
             showStage(parent);
 
         } catch (IOException ignored) {
@@ -204,7 +205,7 @@ public class PasswordListController implements NativeKeyListener {
             AddEntryDialogController dialogController = fxmlLoader.getController();
             dialogController.setMasterPassword(masterPassword);
             dialogController.setDb(db);
-            dialogController.setPNameText(pName);
+            dialogController.setPNameText(db.getPName(pName));
             dialogController.getpName().setDisable(true);
             dialogController.setNickname(db.getNickname(pName));
             dialogController.getNickname().setDisable(true);
