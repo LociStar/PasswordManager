@@ -68,6 +68,7 @@ public class PasswordCSV {
     }
 
     private void importOpera() {
+        startParser(1, 2, 3);
     }
 
     private void importMozillaFirefox() {
