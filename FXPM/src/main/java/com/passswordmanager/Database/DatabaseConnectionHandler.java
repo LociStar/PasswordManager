@@ -295,10 +295,11 @@ public class DatabaseConnectionHandler {
                 //add Passwords to List
                 pName = rs.getString("keyBehaviour");
             }
+            return pName;
         } catch (SQLException sqlException) {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
         }
-        return pName;
+        return "USERNAME+TAB+PASSWORD";
     }
 
     public void updateProgram(String oldName, String newName, String newNickname, String behaviour) {
