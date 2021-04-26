@@ -188,6 +188,8 @@ public class PasswordListController implements NativeKeyListener {
             settingUIController.getTitle().setText(db.getPName(label));
             settingUIController.getNickname().setText(db.getNickname(label));
             settingUIController.setOldNickname(db.getNickname(label));
+            System.out.println(db.getPName(label));
+            System.out.println(db.getKeyBehaviour(db.getPName(label)));
             settingUIController.getKeyShortCut().setText(db.getKeyBehaviour(db.getPName(label)));
             showStage(parent);
             loadTable(masterPassword.getPassword());
@@ -253,7 +255,7 @@ public class PasswordListController implements NativeKeyListener {
         accordion.getPanes().removeAll(accordion.getPanes());
         Map<String, Map<String, String>> hashMap = FileCrypt.getListDB(masterPassword, db);
         hashMap.forEach((s, stringStringMap) -> {
-            String[] names = s.split(":");
+            String[] names = s.split(" -:- ");
             if (names.length == 2) {
                 accordion.getPanes().add(createTiltedPane(names[0], names[1], stringStringMap));
             } else {

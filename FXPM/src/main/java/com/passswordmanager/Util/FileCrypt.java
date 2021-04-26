@@ -50,7 +50,7 @@ public abstract class FileCrypt {
     public static Map<String, Map<String, String>> getListDB(String masterPassword, DatabaseConnectionHandler db) {
         Map<String, String> pNames = db.getProgramNames();
         Map<String, Map<String, String>> hashMap = new HashMap<>();
-        pNames.forEach((s, s2) -> hashMap.put(s + ":" + s2, db.getUsrPwNames(s)));
+        pNames.forEach((s, s2) -> hashMap.put(s + " -:- " + s2, db.getUsrPwNames(s)));
         return hashMap;
     }
 
