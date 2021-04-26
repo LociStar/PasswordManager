@@ -310,10 +310,6 @@ public class DatabaseConnectionHandler {
                     "nickname='" + newNickname + "', " +
                     "keyBehaviour='" + behaviour + "'" +
                     "WHERE name='" + oldName + "';");
-
-//            st.execute("UPDATE Password " +
-//                    "SET pName='" + newName + "'" +
-//                    "WHERE pName='" + oldName + "';");
         } catch (SQLException sqlException) {
             System.out.println("Update Error: " + sqlException.getMessage());
         }
