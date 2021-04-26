@@ -71,6 +71,7 @@ public class PasswordCSV {
     }
 
     private void importMozillaFirefox() {
+        startParser(0, 1, 2);
     }
 
     public void importGoogleChrome() {

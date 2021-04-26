@@ -73,8 +73,8 @@ public class DatabaseConnectionHandler {
         System.out.println();
 
         //filter
-        programName = programName.replaceAll("'", "''");
-        nickname = nickname.replaceAll("'", "''");
+        programName = filter(programName);
+        nickname = filter(nickname);
 
         nickname = nickname.equals("") ? programName : nickname;
 
@@ -91,6 +91,7 @@ public class DatabaseConnectionHandler {
     }
 
     public boolean delete(String username, String programName) {
+        programName = filter(programName);
         try {
             st.execute("DELETE FROM Password WHERE username='" + username + "' AND pName='" + programName + "';");
             return true;
@@ -124,6 +125,7 @@ public class DatabaseConnectionHandler {
     }
 
     public Map<String, String> getUsrPwNames(String programName) {
+        programName = filter(programName);
         try {
             ResultSet rs = st.executeQuery("SELECT username, pw FROM Password WHERE pName='" + programName + "';");
             Map<String, String> map = new HashMap<>();
@@ -154,6 +156,7 @@ public class DatabaseConnectionHandler {
     }
 
     public Account getPassword(String username, String nickname) {
+        nickname = filter(nickname);
         Program program = new Program();
         program.setNickname(nickname);
         Account account = new Account(username, "");
@@ -175,6 +178,7 @@ public class DatabaseConnectionHandler {
     }
 
     public Program getPasswords(String pName) {
+        pName = filter(pName);
         List<Account> accounts = new ArrayList<>();
         try {
             ResultSet rs = st.executeQuery("SELECT username, pw FROM Password WHERE pName='" + pName + "';");
@@ -189,9 +193,10 @@ public class DatabaseConnectionHandler {
     }
 
     public String getNickname(String pName) {
+        String pNameFiltered = filter(pName);
         String nickname = "";
         try {
-            ResultSet rs = st.executeQuery("SELECT nickname FROM ProgramName WHERE name='" + pName + "';");
+            ResultSet rs = st.executeQuery("SELECT nickname FROM ProgramName WHERE name='" + pNameFiltered + "';");
             while (rs.next()) {
                 //add Passwords to List
                 nickname = rs.getString("nickname");
@@ -203,10 +208,10 @@ public class DatabaseConnectionHandler {
     }
 
     public String getPName(String nickname) {
-
+        String nicknameFiltered = filter(nickname);
         String pName = "";
         try {
-            ResultSet rs = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nickname + "';");
+            ResultSet rs = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nicknameFiltered + "';");
             while (rs.next()) {
                 //add Passwords to List
                 pName = rs.getString("name");
@@ -218,6 +223,7 @@ public class DatabaseConnectionHandler {
     }
 
     public void updateEntry(String pName, String oldUsername, String newUsername, String password) {
+        pName = filter(pName);
         try {
             if (password == null)
                 st.execute("UPDATE Password " +
@@ -234,6 +240,9 @@ public class DatabaseConnectionHandler {
     }
 
     public boolean isValidNickname(String nickname, String oldNickname) {
+        nickname = filter(nickname);
+        if (oldNickname != null)
+            oldNickname = filter(oldNickname);
         if (nickname.equals(oldNickname)) return true;
         if (nickname.equals("")) return true;
         try {
@@ -255,6 +264,8 @@ public class DatabaseConnectionHandler {
     }
 
     public boolean isValidProgramName(String oldName, String pName) {
+        pName = filter(pName);
+        oldName = filter(oldName);
         if (oldName.equals(pName)) return true;
         if (pName.equals("")) return false;
         try {
@@ -286,6 +297,7 @@ public class DatabaseConnectionHandler {
     }
 
     public String getKeyBehaviour(String pName) {
+        pName = filter(pName);
         try {
             //for backwards compatibility
             st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
@@ -303,6 +315,9 @@ public class DatabaseConnectionHandler {
     }
 
     public void updateProgram(String oldName, String newName, String newNickname, String behaviour) {
+        oldName = filter(oldName);
+        newName = filter(newName);
+        newNickname = filter(newNickname);
         try {
             //for backwards compatibility
             st.execute("UPDATE ProgramName " +
@@ -324,6 +339,10 @@ public class DatabaseConnectionHandler {
         }
 
 
+    }
+
+    public String filter(String name) {
+        return name.replaceAll("'", "''");
     }
 
 }

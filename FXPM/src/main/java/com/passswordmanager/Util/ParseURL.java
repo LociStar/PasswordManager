@@ -30,7 +30,7 @@ public class ParseURL extends Thread {
     public void run() {
         System.out.println("started: " + this.getId());
         title = getTitleOfWebpage(line[posUrl]);
-        account = new Account(line[posUName], line[posPwd]);
+        account = new Account(line[posUName].replaceAll("\"", ""), line[posPwd].replaceAll("\"", ""));
         System.out.println("stoped: " + this.getId());
     }
 
