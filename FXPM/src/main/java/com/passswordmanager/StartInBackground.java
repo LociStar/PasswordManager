@@ -193,6 +193,7 @@ public class StartInBackground extends Application {
                 notificationTimer.cancel();
                 Platform.runLater(() -> {
                     passwordStage.close();
+                    loginPageController.getDb().closeConnection();
                     if (loginPageController.getMasterPassword() != null)
                         loginPageController.getMasterPassword().clearGuardedString();
                     loginStage.close();

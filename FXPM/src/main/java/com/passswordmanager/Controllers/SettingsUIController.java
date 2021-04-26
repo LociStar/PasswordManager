@@ -1,6 +1,9 @@
 package com.passswordmanager.Controllers;
 
+import com.passswordmanager.Database.DatabaseConnectionHandler;
+import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Util.Config;
+import com.passswordmanager.Util.PasswordCSV;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -26,6 +29,10 @@ public class SettingsUIController {
     //private LoginPageController loginPageController;
     //private PasswordListController passwordListController;
     private Config config;
+
+    private DatabaseConnectionHandler db;
+    private MasterPassword masterPassword;
+    private PasswordListController passwordListController;
 
     @FXML
     public void onCancelPressed(ActionEvent actionEvent) {
@@ -61,5 +68,28 @@ public class SettingsUIController {
 
     public void setConfig(Config config) {
         this.config = config;
+    }
+
+    public void setDb(DatabaseConnectionHandler db) {
+        this.db = db;
+    }
+
+    @FXML
+    public void onExportPressed(ActionEvent actionEvent) {
+    }
+
+    @FXML
+    public void onImportPressed(ActionEvent actionEvent) {
+        PasswordCSV passwordCSV = new PasswordCSV(db, (Stage) databasePathField.getScene().getWindow(), masterPassword);
+        passwordCSV.setPasswordListController(passwordListController);
+        passwordCSV.importPasswords();
+    }
+
+    public void setMasterPassword(MasterPassword masterPassword) {
+        this.masterPassword = masterPassword;
+    }
+
+    public void setPasswordListController(PasswordListController passwordListController) {
+        this.passwordListController = passwordListController;
     }
 }

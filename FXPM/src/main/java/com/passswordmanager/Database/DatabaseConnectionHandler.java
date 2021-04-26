@@ -11,7 +11,7 @@ import java.util.Map;
 
 
 public class DatabaseConnectionHandler {
-    private final String user = "sa";
+    private final String user = "admin";
     private String url = "jdbc:h2:file:C:/data/passwordManager;mode=MySQL";
     private Connection con;
     private Statement st;
@@ -22,7 +22,7 @@ public class DatabaseConnectionHandler {
     }
 
     public void createDB(String password) {
-        String query = "ALTER USER sa SET PASSWORD '" + password + "'";
+        String query = "ALTER USER admin SET PASSWORD '" + password + "'";
         String createTable = "CREATE TABLE ProgramName\n" +
                 "(name varchar(255) NOT NULL ,\n" +
                 " nickname varchar(255) ,\n " +
@@ -61,11 +61,20 @@ public class DatabaseConnectionHandler {
         try {
             this.con = DriverManager.getConnection(url, user, passwd);
             this.st = con.createStatement();
-        } catch (SQLException ignored) {
+        } catch (SQLException error) {
+            error.printStackTrace();
         }
     }
 
     public boolean insert(String username, String pw, String programName, String nickname) {
+        System.out.println();
+        System.out.println("PName: " + programName);
+        System.out.println("user: " + username);
+        System.out.println();
+
+        //filter
+        programName = programName.replaceAll("'", "''");
+        nickname = nickname.replaceAll("'", "''");
 
         nickname = nickname.equals("") ? programName : nickname;
 
@@ -307,6 +316,17 @@ public class DatabaseConnectionHandler {
         } catch (SQLException sqlException) {
             System.out.println("Update Error: " + sqlException.getMessage());
         }
+    }
+
+    public void closeConnection() {
+        try {
+            st.close();
+            con.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+
     }
 
 }

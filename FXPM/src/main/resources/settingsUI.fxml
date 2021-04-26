@@ -62,21 +62,35 @@
             </Label>
             <TextField fx:id="masterPasswordField" editable="false" minWidth="149.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
-                  <Insets right="5.0" />
+                  <Insets right="5.0"/>
                </HBox.margin>
             </TextField>
          </children>
       </HBox>
       <HBox alignment="CENTER" minWidth="140.0" prefHeight="50.0">
          <children>
+            <Button mnemonicParsing="false" onAction="#onExportPressed" prefHeight="25.0" prefWidth="100.0" text="Export">
+               <HBox.margin>
+                  <Insets left="5.0" right="10.0"/>
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#onImportPressed" prefHeight="25.0" prefWidth="100.0" text="Import">
+               <HBox.margin>
+                  <Insets left="10.0" right="5.0"/>
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" minWidth="140.0" prefHeight="50.0">
+         <children>
             <Button mnemonicParsing="false" onAction="#onCancelPressed" prefHeight="25.0" prefWidth="100.0" text="Cancel">
                <HBox.margin>
-                  <Insets left="5.0" right="10.0" />
+                  <Insets left="5.0" right="10.0"/>
                </HBox.margin>
             </Button>
             <Button mnemonicParsing="false" onAction="#onSavedPressed" prefHeight="25.0" prefWidth="100.0" text="Save">
                <HBox.margin>
-                  <Insets left="10.0" right="5.0" />
+                  <Insets left="10.0" right="5.0"/>
                </HBox.margin>
             </Button>
          </children>

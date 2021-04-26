@@ -443,8 +443,9 @@ public class PasswordListController implements NativeKeyListener {
         char[] buffer = new char[MAX_TITLE_LENGTH * 2];
         WinDef.HWND hwnd = User32.INSTANCE.GetForegroundWindow();
         User32.INSTANCE.GetWindowText(hwnd, buffer, MAX_TITLE_LENGTH);
-        System.out.println("Active window title: " + Native.toString(buffer));
-        return Native.toString(buffer);
+        //do not edit
+        System.out.println("Active window title: " + Native.toString(buffer).trim().split(" — ")[0].split(" – ")[0]);
+        return Native.toString(buffer).trim().split(" — ")[0].split(" – ")[0];
     }
 
     public void resetPassword() {
@@ -470,8 +471,11 @@ public class PasswordListController implements NativeKeyListener {
         stage.setTitle("PasswordManager");
         stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
         SettingsUIController settingsUIController = fxmlLoader.getController();
+        settingsUIController.setPasswordListController(this);
         settingsUIController.setConfig(this.config);
         settingsUIController.loadConfig();
+        settingsUIController.setDb(db);
+        settingsUIController.setMasterPassword(masterPassword);
         //stage.initStyle(StageStyle.UNDECORATED);
         //stage.initModality(Modality.WINDOW_MODAL);
         stage.setAlwaysOnTop(true);

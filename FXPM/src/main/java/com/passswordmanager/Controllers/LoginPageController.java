@@ -18,15 +18,14 @@ import javafx.stage.Window;
  * FXML Controller to control loginPage.fxml
  */
 public class LoginPageController {
+    private final Config config = new Config();
     @FXML
     public PasswordField passwordField;
-
     private PasswordListController passwordListController;
     private Stage passwordStage;
     private MasterPassword masterPassword;
     private boolean locked = true;
-
-    private final Config config = new Config();
+    private DatabaseConnectionHandler db;
 
     /**
      * Handles the event, if the unlock button is pressed.
@@ -46,7 +45,8 @@ public class LoginPageController {
             Stage stage = (Stage) window;
             stage.hide();
             passwordField.clear();
-            passwordListController.setDb(new DatabaseConnectionHandler(masterPassword.getPassword(), config.getDatabasePath()));
+            this.db = new DatabaseConnectionHandler(masterPassword.getPassword(), config.getDatabasePath());
+            passwordListController.setDb(this.db);
             passwordListController.loadTable(masterPassword.getPassword());
             passwordListController.setMasterPassword(this.masterPassword);
             masterPassword.clearPasswordCache();
@@ -119,5 +119,9 @@ public class LoginPageController {
 
     public boolean isLocked() {
         return locked;
+    }
+
+    public DatabaseConnectionHandler getDb() {
+        return db;
     }
 }

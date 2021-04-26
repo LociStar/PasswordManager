@@ -26,11 +26,13 @@ public class Program {
 
     public Program(String title) {
         this.title = title;
+        this.nickname = "";
         this.accounts = new ArrayList<>();
     }
 
     public Program() {
         this.title = "";
+        this.nickname = "";
         this.accounts = new ArrayList<>();
     }
 
@@ -56,5 +58,17 @@ public class Program {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void appendAccount(Account newAccount) {
+        if (accounts.size() == 0) {
+            accounts.add(newAccount);
+        }
+        for (Account a : accounts) {
+            if (a.equals(newAccount)) {
+                return;
+            }
+        }
+        accounts.add(newAccount);
     }
 }
