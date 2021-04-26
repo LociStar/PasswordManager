@@ -74,6 +74,10 @@ public class PasswordCSV {
     }
 
     public void importGoogleChrome() {
+        startParser(1, 2, 3);
+    }
+
+    public void startParser(int posUrl, int posUName, int posPwd) {
         File file = getFile();
 
         Thread thread = new Thread(() -> {
@@ -85,7 +89,7 @@ public class PasswordCSV {
 
                 ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
                 List<ParseURL> tasks = new ArrayList<>();
-                result.forEach(strings -> tasks.add(new ParseURL(strings, 1, 2, 3)));
+                result.forEach(strings -> tasks.add(new ParseURL(strings, posUrl, posUName, posPwd)));
                 tasks.forEach(threadPoolExecutor::execute);
 
                 threadPoolExecutor.shutdown();
@@ -117,7 +121,6 @@ public class PasswordCSV {
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
-
     }
 
     private File getFile() {
