@@ -421,7 +421,7 @@ public class PasswordListController implements NativeKeyListener {
         userSelectionDialogController.setOnlyPassword(onlyPassword);
         stage.initStyle(StageStyle.UNDECORATED);
         stage.initModality(Modality.WINDOW_MODAL);
-        stage.setAlwaysOnTop(true);
+        stage.toFront();
         stage.setScene(scene);
         stage.setTitle("PasswordManager");
         stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
@@ -480,7 +480,7 @@ public class PasswordListController implements NativeKeyListener {
         settingsUIController.setMasterPassword(masterPassword);
         //stage.initStyle(StageStyle.UNDECORATED);
         //stage.initModality(Modality.WINDOW_MODAL);
-        stage.setAlwaysOnTop(true);
+        stage.toFront();
         stage.setScene(scene);
         stage.showAndWait();
     }

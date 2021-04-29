@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.passswordmanager.Controllers.ChangeMPIController">
+   <children>
+      <Label text="Change Master Password">
+         <font>
+            <Font size="18.0"/>
+         </font>
+         <VBox.margin>
+            <Insets bottom="10.0"/>
+         </VBox.margin>
+      </Label>
+      <HBox alignment="CENTER_LEFT">
+         <children>
+            <Label prefHeight="17.0" prefWidth="105.0" text="Old Password">
+               <HBox.margin>
+                  <Insets left="10.0"/>
+               </HBox.margin>
+            </Label>
+            <PasswordField fx:id="oldPwd" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="10.0"/>
+               </HBox.margin>
+            </PasswordField>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0"/>
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_LEFT">
+         <children>
+            <Label prefHeight="17.0" prefWidth="105.0" text="New Password">
+               <HBox.margin>
+                  <Insets left="10.0"/>
+               </HBox.margin>
+            </Label>
+            <PasswordField fx:id="newPwd" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="10.0"/>
+               </HBox.margin>
+            </PasswordField>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0"/>
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_LEFT">
+         <children>
+            <Label prefHeight="17.0" prefWidth="105.0" text="Confirm Password">
+               <HBox.margin>
+                  <Insets left="10.0"/>
+               </HBox.margin>
+            </Label>
+            <PasswordField fx:id="conPwd" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="10.0"/>
+               </HBox.margin>
+            </PasswordField>
+         </children>
+         <VBox.margin>
+            <Insets bottom="20.0"/>
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onCanceledPressed" text="Cancel">
+               <HBox.margin>
+                  <Insets left="10.0"/>
+               </HBox.margin>
+            </Button>
+            <Separator prefWidth="200.0" visible="false" HBox.hgrow="ALWAYS"/>
+            <Button mnemonicParsing="false" onAction="#onConfirmPressed" text="Confirm and Close App">
+               <HBox.margin>
+                  <Insets right="10.0"/>
+               </HBox.margin>
+            </Button>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0"/>
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>

@@ -57,7 +57,7 @@
          <children>
             <Label minWidth="140.0" text="Hashed Master Password:" HBox.hgrow="NEVER">
                <HBox.margin>
-                  <Insets left="10.0" />
+                  <Insets left="10.0"/>
                </HBox.margin>
             </Label>
             <TextField fx:id="masterPasswordField" editable="false" minWidth="149.0" HBox.hgrow="ALWAYS">
@@ -66,6 +66,14 @@
                </HBox.margin>
             </TextField>
          </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onChangeMPPressed" text="Change Masterpassword"/>
+         </children>
+         <VBox.margin>
+            <Insets right="10.0"/>
+         </VBox.margin>
       </HBox>
       <HBox alignment="CENTER" minWidth="140.0" prefHeight="50.0">
          <children>

@@ -1,7 +1,9 @@
 package com.passswordmanager.Database;
 
 import com.passswordmanager.Datatypes.Account;
+import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
+import com.passswordmanager.Util.FileCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -345,4 +347,21 @@ public class DatabaseConnectionHandler {
         return name.replaceAll("'", "''");
     }
 
+    public void changeMP(MasterPassword oldMasterPassword, MasterPassword newMasterPassword) {
+        try {
+            st.execute("ALTER USER admin SET PASSWORD '" + newMasterPassword.getPassword() + "'");
+            ResultSet rs = st.executeQuery("SELECT username, pw FROM Password;");
+            Statement st2 = con.createStatement();
+            while (rs.next()) {
+                System.out.println(rs.getString("username"));
+                st2.execute("UPDATE Password " +
+                        "SET pw='" + FileCrypt.encryptText(FileCrypt.decryptText(rs.getString("pw"), oldMasterPassword.getPassword()), newMasterPassword.getPassword()) + "' " +
+                        "WHERE username='" + rs.getString("username") + "';");
+            }
+            newMasterPassword.clearPasswordCache();
+            oldMasterPassword.clearPasswordCache();
+        } catch (SQLException sqlException) {
+            System.out.println("Update Error: " + sqlException.getMessage());
+        }
+    }
 }

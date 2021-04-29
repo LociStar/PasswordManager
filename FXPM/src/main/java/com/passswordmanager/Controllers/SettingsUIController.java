@@ -2,13 +2,19 @@ package com.passswordmanager.Controllers;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
 import com.passswordmanager.Datatypes.MasterPassword;
+import com.passswordmanager.StartInBackground;
 import com.passswordmanager.Util.Config;
 import com.passswordmanager.Util.PasswordCSV;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -91,5 +97,24 @@ public class SettingsUIController {
 
     public void setPasswordListController(PasswordListController passwordListController) {
         this.passwordListController = passwordListController;
+    }
+
+    public void onChangeMPPressed(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(SettingsUIController.class.getResource("/changeMPUI.fxml"));
+        Parent parent = fxmlLoader.load();
+
+        ChangeMPIController changeMPIController = fxmlLoader.getController();
+        changeMPIController.setDb(this.db);
+        changeMPIController.setOldMasterPassword(masterPassword);
+
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        stage.setTitle("PasswordManager");
+        stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.toFront();
+        stage.showAndWait();
+        System.exit(0);
     }
 }

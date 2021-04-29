@@ -156,11 +156,7 @@ public class PasswordCSV {
 
     private Program appendProgram(String title) {
         if (title.equals("")) return null;
-        System.out.println(title);
-        if (programList.size() == 0) {
-            Program program = new Program(title);
-            programList.add(program);
-        }
+
         for (Program p : programList) {
             if (p.getTitle().equals(title)) {
                 return p;
