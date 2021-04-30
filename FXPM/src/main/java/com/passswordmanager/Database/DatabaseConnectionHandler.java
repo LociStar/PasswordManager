@@ -358,4 +358,15 @@ public class DatabaseConnectionHandler {
             System.out.println("Update Error: " + sqlException.getMessage());
         }
     }
+
+    public void addURL(String programName, String url) {
+        try {
+            st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS url varchar(255);");
+            st.execute("UPDATE ProgramName" +
+                    "SET url='" + url + "'" +
+                    "WHERE name='" + programName + "';");
+        } catch (SQLException sqlException) {
+            System.out.println("Update Error: " + sqlException.getMessage());
+        }
+    }
 }
