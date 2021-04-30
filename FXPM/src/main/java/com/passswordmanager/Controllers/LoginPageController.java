@@ -56,7 +56,6 @@ public class LoginPageController {
             this.locked = false;
             stage.show();
         } else {
-            System.out.println(hash);
             System.out.println("Incorrect Password");
         }
 

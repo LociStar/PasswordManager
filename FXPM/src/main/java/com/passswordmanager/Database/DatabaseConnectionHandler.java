@@ -69,11 +69,6 @@ public class DatabaseConnectionHandler {
     }
 
     public boolean insert(String username, String pw, String programName, String nickname) {
-        System.out.println();
-        System.out.println("PName: " + programName);
-        System.out.println("user: " + username);
-        System.out.println();
-
         //filter
         programName = filter(programName);
         nickname = filter(nickname);
@@ -353,7 +348,6 @@ public class DatabaseConnectionHandler {
             ResultSet rs = st.executeQuery("SELECT username, pw FROM Password;");
             Statement st2 = con.createStatement();
             while (rs.next()) {
-                System.out.println(rs.getString("username"));
                 st2.execute("UPDATE Password " +
                         "SET pw='" + FileCrypt.encryptText(FileCrypt.decryptText(rs.getString("pw"), oldMasterPassword.getPassword()), newMasterPassword.getPassword()) + "' " +
                         "WHERE username='" + rs.getString("username") + "';");

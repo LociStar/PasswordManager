@@ -81,11 +81,11 @@ public class SettingsUIController {
     }
 
     @FXML
-    public void onExportPressed(ActionEvent actionEvent) {
+    public void onExportPressed() {
     }
 
     @FXML
-    public void onImportPressed(ActionEvent actionEvent) {
+    public void onImportPressed() {
         PasswordCSV passwordCSV = new PasswordCSV(db, (Stage) databasePathField.getScene().getWindow(), masterPassword);
         passwordCSV.setPasswordListController(passwordListController);
         passwordCSV.importPasswords();
@@ -99,7 +99,7 @@ public class SettingsUIController {
         this.passwordListController = passwordListController;
     }
 
-    public void onChangeMPPressed(ActionEvent actionEvent) throws IOException {
+    public void onChangeMPPressed() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SettingsUIController.class.getResource("/changeMPUI.fxml"));
         Parent parent = fxmlLoader.load();
 

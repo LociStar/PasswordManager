@@ -42,8 +42,6 @@ public class InstallUIController {
     public void onInstallPressed() {
         if (!masterPasswordField.getText().equals(masterPasswordFieldConfirm.getText())) return;
         String hash = SCryptUtil.scrypt(masterPasswordFieldConfirm.getText(), 8, 8, 8);
-        System.out.println("Hash:");
-        System.out.println(hash);
 
         boolean matched = SCryptUtil.check(masterPasswordFieldConfirm.getText(), hash);
         System.out.println("Must be True: " + matched);

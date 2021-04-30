@@ -446,7 +446,7 @@ public class PasswordListController implements NativeKeyListener {
         WinDef.HWND hwnd = User32.INSTANCE.GetForegroundWindow();
         User32.INSTANCE.GetWindowText(hwnd, buffer, MAX_TITLE_LENGTH);
         //do not edit
-        System.out.println("Active window title: " + Native.toString(buffer).trim().split(" — ")[0].split(" – ")[0]);
+        //System.out.println("Active window title: " + Native.toString(buffer).trim().split(" — ")[0].split(" – ")[0]);
         return Native.toString(buffer).trim().split(" — ")[0].split(" – ")[0];
     }
 
