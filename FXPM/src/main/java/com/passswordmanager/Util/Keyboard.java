@@ -25,17 +25,11 @@ public class Keyboard {
     public Keyboard(boolean resetKeys) throws AWTException, InterruptedException {
         robot = new Robot();
         robot.setAutoDelay(0);
-
         if (resetKeys) {
             robot.keyRelease(KeyEvent.VK_CONTROL);
             robot.keyRelease(KeyEvent.VK_ALT);
         }
-
         robot.waitForIdle();
-        robot.setAutoWaitForIdle(true);
-        //release the "trigger" keys
-
-
     }
 
     /**
