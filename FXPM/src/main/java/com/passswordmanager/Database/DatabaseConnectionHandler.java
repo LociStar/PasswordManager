@@ -360,9 +360,10 @@ public class DatabaseConnectionHandler {
     }
 
     public void addURL(String programName, String url) {
+        programName = filter(programName);
         try {
             st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS url varchar(255);");
-            st.execute("UPDATE ProgramName" +
+            st.execute("UPDATE ProgramName " +
                     "SET url='" + url + "'" +
                     "WHERE name='" + programName + "';");
         } catch (SQLException sqlException) {
