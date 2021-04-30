@@ -65,14 +65,19 @@ public class Program {
     }
 
     public void appendAccount(Account newAccount) {
-        if (accounts.size() == 0) {
-            accounts.add(newAccount);
-        }
         for (Account a : accounts) {
             if (a.equals(newAccount)) {
                 return;
             }
         }
         accounts.add(newAccount);
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

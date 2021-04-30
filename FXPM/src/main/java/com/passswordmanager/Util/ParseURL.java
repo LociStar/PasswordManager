@@ -57,4 +57,8 @@ public class ParseURL extends Thread {
     public Account getAccount() {
         return account;
     }
+
+    public String getUrl() {
+        return line[posUrl];
+    }
 }

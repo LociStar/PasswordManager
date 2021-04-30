@@ -140,12 +140,13 @@ public class PasswordCSV {
                 db.insert(account.getUsername(), FileCrypt.encryptText(account.getPassword(), masterPassword.getPassword()), program.getTitle(), "");
                 masterPassword.clearPasswordCache();
             }
+            db.addURL(program.getTitle(), program.getUrl());
         }
     }
 
     private void convert(ParseURL parseURL) {
 
-        Program program = appendProgram(parseURL.getTitle());
+        Program program = appendProgram(parseURL.getTitle(), parseURL.getUrl());
         if (program == null) return;
 
         Account account = parseURL.getAccount();
@@ -154,7 +155,7 @@ public class PasswordCSV {
 
     }
 
-    private Program appendProgram(String title) {
+    private Program appendProgram(String title, String url) {
         if (title.equals("")) return null;
 
         for (Program p : programList) {
@@ -162,7 +163,7 @@ public class PasswordCSV {
                 return p;
             }
         }
-        Program program = new Program(title);
+        Program program = new Program(title, url);
         programList.add(program);
         return program;
     }
