@@ -10,30 +10,34 @@ public class Program {
 
     private String title;
     private String nickname;
+    private String url;
     private List<Account> accounts;
 
-    public Program(String title, String nickname, List<Account> accounts) {
+    public Program(String title, String nickname, String url, List<Account> accounts) {
         this.title = title;
         this.nickname = nickname;
         this.accounts = accounts;
+        this.url = url;
+    }
+
+    public Program(String title, String nickname, List<Account> accounts) {
+        this(title, nickname, "", accounts);
     }
 
     public Program(String title, List<Account> accounts) {
-        this.title = title;
-        this.nickname = "";
-        this.accounts = accounts;
+        this(title, "", accounts);
+    }
+
+    public Program(String title, String url) {
+        this(title, "", url, new ArrayList<>());
     }
 
     public Program(String title) {
-        this.title = title;
-        this.nickname = "";
-        this.accounts = new ArrayList<>();
+        this(title, new ArrayList<>());
     }
 
     public Program() {
-        this.title = "";
-        this.nickname = "";
-        this.accounts = new ArrayList<>();
+        this("");
     }
 
     public String getTitle() {
