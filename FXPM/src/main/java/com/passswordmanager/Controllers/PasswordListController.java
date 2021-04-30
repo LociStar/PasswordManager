@@ -447,7 +447,13 @@ public class PasswordListController implements NativeKeyListener {
         User32.INSTANCE.GetWindowText(hwnd, buffer, MAX_TITLE_LENGTH);
         //do not edit
         //System.out.println("Active window title: " + Native.toString(buffer).trim().split(" — ")[0].split(" – ")[0]);
-        return Native.toString(buffer).trim().split(" — ")[0].split(" – ")[0];
+        String title = Native.toString(buffer).trim();
+        int i = title.lastIndexOf(" - ");
+        title = title.substring(0, i + 1);
+        if (i == -1) {
+            return Native.toString(buffer).trim().split(" — ")[0];
+        }
+        return title.substring(0, title.length() - 1);
     }
 
     public void resetPassword() {
