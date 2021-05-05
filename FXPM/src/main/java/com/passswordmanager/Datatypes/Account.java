@@ -31,4 +31,8 @@ public class Account {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public boolean equals(Account account) {
+        return (account.getUsername().equals(this.username) && account.getPassword().equals(this.password));
+    }
 }

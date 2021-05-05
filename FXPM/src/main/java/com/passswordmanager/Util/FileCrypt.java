@@ -1,6 +1,9 @@
 package com.passswordmanager.Util;
 
 import com.passswordmanager.Database.DatabaseConnectionHandler;
+import com.passswordmanager.Datatypes.Account;
+import com.passswordmanager.Datatypes.MasterPassword;
+import com.passswordmanager.Datatypes.Program;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.passay.CharacterData;
 import org.passay.CharacterRule;
@@ -10,9 +13,7 @@ import org.passay.PasswordGenerator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * abstract class to Handle the encryption/ decryption and hashing
@@ -41,17 +42,34 @@ public abstract class FileCrypt {
     }
 
     /**
-     * generate a decrypted Map of name-password
+     * generate a encrypted Map of name-password
      *
-     * @param masterPassword master password for decryption
-     * @param db             DatabaseConnectionHandler
+     * @param db DatabaseConnectionHandler
      * @return Map(name, password)
      */
-    public static Map<String, Map<String, String>> getListDB(String masterPassword, DatabaseConnectionHandler db) {
+    public static Map<String, Map<String, String>> getListDB(DatabaseConnectionHandler db) {
         Map<String, String> pNames = db.getProgramNames();
         Map<String, Map<String, String>> hashMap = new HashMap<>();
-        pNames.forEach((s, s2) -> hashMap.put(s + ":" + s2, db.getUsrPwNames(s)));
+        pNames.forEach((s, s2) -> hashMap.put(s + " -:- " + s2, db.getUsrPwNames(s)));
         return hashMap;
+    }
+
+    /**
+     * generate a decrypted Map of name-password
+     *
+     * @param db DatabaseConnectionHandler
+     * @return Map(name, password)
+     */
+    public static List<Program> getProgramBEncrypted(DatabaseConnectionHandler db, MasterPassword masterPassword) {
+        Map<String, String> pNames = db.getProgramNames();
+        List<Program> list = new ArrayList<>(pNames.size());
+        pNames.forEach((s, s2) -> {
+            Program program = appendProgram(s, list);
+            db.getUsrPwNames(s).forEach((s3, s4) -> program.appendAccount(new Account(s3, FileCrypt.decryptText(s4, masterPassword.getPassword()))));
+        });
+        list.forEach(program -> program.setUrl(db.getUrl(program.getTitle())));
+        masterPassword.clearPasswordCache();
+        return list;
     }
 
     /**
@@ -140,5 +158,17 @@ public abstract class FileCrypt {
 
         return gen.generatePassword(32, splCharRule, lowerCaseRule,
                 upperCaseRule, digitRule);
+    }
+
+    private static Program appendProgram(String title, List<Program> list) {
+        for (Program p :
+                list) {
+            if (p.getTitle().equals(title)) {
+                return p;
+            }
+        }
+        Program program = new Program(title);
+        list.add(program);
+        return program;
     }
 }

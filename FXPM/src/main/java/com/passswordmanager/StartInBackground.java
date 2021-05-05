@@ -43,6 +43,8 @@ public class StartInBackground extends Application {
 
     private boolean isInstalled = false;
 
+    private final String icon = "/icon.png";
+
     // a timer allowing the tray icon to provide a periodic notification event.
     private final Timer notificationTimer = new Timer();
 
@@ -67,7 +69,7 @@ public class StartInBackground extends Application {
             installUIController.setDatabasePath(System.getenv("APPDATA") + "\\PasswordManager");
             Scene scene = new Scene(parent);
             stage.setTitle("PasswordManager");
-            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
+            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
             stage.setOnCloseRequest(event -> {
                 Platform.exit();
                 System.exit(0);
@@ -95,7 +97,7 @@ public class StartInBackground extends Application {
 
             stage.setScene(scene);
             stage.setTitle("PasswordManager");
-            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
+            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
 
             //load second fxml
             FXMLLoader loaderPL = loadFXML("passwordListUI");
@@ -104,7 +106,9 @@ public class StartInBackground extends Application {
             passwordStage = new Stage();
             passwordStage.setScene(scene1);
             passwordStage.initStyle(StageStyle.DECORATED);
+
             PasswordListController passwordListController = loaderPL.getController();
+            passwordStage.setOnCloseRequest(event -> passwordListController.hideAllPasswords());
             passwordListController.setMasterPassword(loginPageController.getMasterPassword());
 
             loginPageController.setPasswordListController(passwordListController);
@@ -165,7 +169,7 @@ public class StartInBackground extends Application {
 
             // set up a system tray icon.
             java.awt.SystemTray tray = java.awt.SystemTray.getSystemTray();
-            java.awt.Image image = ImageIO.read(Main.class.getResource("/icon.png"));
+            java.awt.Image image = ImageIO.read(Main.class.getResource(icon));
             java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(image);
             trayIcon.setImageAutoSize(true);
 
@@ -191,6 +195,7 @@ public class StartInBackground extends Application {
                 notificationTimer.cancel();
                 Platform.runLater(() -> {
                     passwordStage.close();
+                    loginPageController.getDb().closeConnection();
                     if (loginPageController.getMasterPassword() != null)
                         loginPageController.getMasterPassword().clearGuardedString();
                     loginStage.close();

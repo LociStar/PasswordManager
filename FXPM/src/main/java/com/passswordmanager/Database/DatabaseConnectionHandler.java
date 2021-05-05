@@ -1,7 +1,9 @@
 package com.passswordmanager.Database;
 
 import com.passswordmanager.Datatypes.Account;
+import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
+import com.passswordmanager.Util.FileCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,8 +13,8 @@ import java.util.Map;
 
 
 public class DatabaseConnectionHandler {
+    private final String user = "admin";
     private String url = "jdbc:h2:file:C:/data/passwordManager;mode=MySQL";
-    private final String user = "sa";
     private Connection con;
     private Statement st;
 
@@ -22,7 +24,7 @@ public class DatabaseConnectionHandler {
     }
 
     public void createDB(String password) {
-        String query = "ALTER USER sa SET PASSWORD '" + password + "'";
+        String query = "ALTER USER admin SET PASSWORD '" + password + "'";
         String createTable = "CREATE TABLE ProgramName\n" +
                 "(name varchar(255) NOT NULL ,\n" +
                 " nickname varchar(255) ,\n " +
@@ -36,7 +38,8 @@ public class DatabaseConnectionHandler {
                 "\n" +
                 "PRIMARY KEY (id),\n" +
                 "CONSTRAINT FK FOREIGN KEY (pName) REFERENCES ProgramName (name)\n" +
-                ");";
+                "ON DELETE CASCADE \n" +
+                "ON UPDATE CASCADE);";
         try {
             this.con = DriverManager.getConnection(url, user, "");
             this.st = con.createStatement();
@@ -60,11 +63,15 @@ public class DatabaseConnectionHandler {
         try {
             this.con = DriverManager.getConnection(url, user, passwd);
             this.st = con.createStatement();
-        } catch (SQLException ignored) {
+        } catch (SQLException error) {
+            error.printStackTrace();
         }
     }
 
     public boolean insert(String username, String pw, String programName, String nickname) {
+        //filter
+        programName = filter(programName);
+        nickname = filter(nickname);
 
         nickname = nickname.equals("") ? programName : nickname;
 
@@ -81,6 +88,7 @@ public class DatabaseConnectionHandler {
     }
 
     public boolean delete(String username, String programName) {
+        programName = filter(programName);
         try {
             st.execute("DELETE FROM Password WHERE username='" + username + "' AND pName='" + programName + "';");
             return true;
@@ -114,6 +122,7 @@ public class DatabaseConnectionHandler {
     }
 
     public Map<String, String> getUsrPwNames(String programName) {
+        programName = filter(programName);
         try {
             ResultSet rs = st.executeQuery("SELECT username, pw FROM Password WHERE pName='" + programName + "';");
             Map<String, String> map = new HashMap<>();
@@ -144,6 +153,7 @@ public class DatabaseConnectionHandler {
     }
 
     public Account getPassword(String username, String nickname) {
+        nickname = filter(nickname);
         Program program = new Program();
         program.setNickname(nickname);
         Account account = new Account(username, "");
@@ -165,6 +175,7 @@ public class DatabaseConnectionHandler {
     }
 
     public Program getPasswords(String pName) {
+        pName = filter(pName);
         List<Account> accounts = new ArrayList<>();
         try {
             ResultSet rs = st.executeQuery("SELECT username, pw FROM Password WHERE pName='" + pName + "';");
@@ -176,5 +187,201 @@ public class DatabaseConnectionHandler {
             System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
         }
         return new Program(pName, accounts);
+    }
+
+    public String getNickname(String pName) {
+        String pNameFiltered = filter(pName);
+        String nickname = "";
+        try {
+            ResultSet rs = st.executeQuery("SELECT nickname FROM ProgramName WHERE name='" + pNameFiltered + "';");
+            while (rs.next()) {
+                //add Passwords to List
+                nickname = rs.getString("nickname");
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+        return nickname.equals("") ? pName : nickname;
+    }
+
+    public String getPName(String nickname) {
+        String nicknameFiltered = filter(nickname);
+        String pName = "";
+        try {
+            ResultSet rs = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nicknameFiltered + "';");
+            while (rs.next()) {
+                //add Passwords to List
+                pName = rs.getString("name");
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+        return pName.equals("") ? nickname : pName;
+    }
+
+    public void updateEntry(String pName, String oldUsername, String newUsername, String password) {
+        pName = filter(pName);
+        try {
+            if (password == null)
+                st.execute("UPDATE Password " +
+                        "SET usernaem='" + newUsername + "', " +
+                        "password='" + password + "' " +
+                        "WHERE username='" + oldUsername + "' AND pName='" + pName + "';");
+            else
+                st.execute("UPDATE Password " +
+                        "SET username='" + newUsername + "'" +
+                        "WHERE username='" + oldUsername + "' AND pName='" + pName + "';");
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+    }
+
+    public boolean isValidNickname(String nickname, String oldNickname) {
+        nickname = filter(nickname);
+        if (oldNickname != null)
+            oldNickname = filter(oldNickname);
+        if (nickname.equals(oldNickname)) return true;
+        if (nickname.equals("")) return true;
+        try {
+            ResultSet rs = st.executeQuery("SELECT name FROM ProgramName WHERE name='" + nickname + "';");
+            if (rs.next()) {
+                System.out.println("nickname cannot be a ProgramName");
+                return false;
+            }
+            ResultSet rs2 = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + nickname + "';");
+            if (rs2.next()) {
+                System.out.println("Nickname already exits");
+                return false;
+            }
+
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error: " + sqlException.getMessage());
+        }
+        return true;
+    }
+
+    public boolean isValidProgramName(String oldName, String pName) {
+        pName = filter(pName);
+        oldName = filter(oldName);
+        if (oldName.equals(pName)) return true;
+        if (pName.equals("")) return false;
+        try {
+            ResultSet rs = st.executeQuery("SELECT name FROM ProgramName WHERE name='" + pName + "';");
+            if (rs.next()) {
+                System.out.println("ProgramName already exists");
+                return false;
+            }
+            ResultSet rs2 = st.executeQuery("SELECT name FROM ProgramName WHERE nickname='" + pName + "';");
+            if (rs2.next()) {
+                System.out.println("ProgramName cant be a Nickname");
+                return false;
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error: " + sqlException.getMessage());
+        }
+        return true;
+    }
+
+    public void setKeyBehaviour(String behaviour) {
+        try {
+            //for backwards compatibility
+            st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
+
+            st.execute("UPDATE ProgramName SET keyBehaviour='" + behaviour + "';");
+        } catch (SQLException sqlException) {
+            System.out.println("Update Error: " + sqlException.getMessage());
+        }
+    }
+
+    public String getKeyBehaviour(String pName) {
+        pName = filter(pName);
+        try {
+            //for backwards compatibility
+            st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS keyBehaviour varchar(255) NOT NULL DEFAULT 'USERNAME+TAB+PASSWORD';");
+
+            ResultSet rs = st.executeQuery("SELECT keyBehaviour FROM ProgramName WHERE name='" + pName + "';");
+            while (rs.next()) {
+                //add Passwords to List
+                pName = rs.getString("keyBehaviour");
+            }
+            return pName;
+        } catch (SQLException sqlException) {
+            System.out.println("Select Error (Entry not found): " + sqlException.getMessage());
+        }
+        return "USERNAME+TAB+PASSWORD";
+    }
+
+    public void updateProgram(String oldName, String newName, String newNickname, String behaviour) {
+        oldName = filter(oldName);
+        newName = filter(newName);
+        newNickname = filter(newNickname);
+        try {
+            //for backwards compatibility
+            st.execute("UPDATE ProgramName " +
+                    "SET name='" + newName + "', " +
+                    "nickname='" + newNickname + "', " +
+                    "keyBehaviour='" + behaviour + "'" +
+                    "WHERE name='" + oldName + "';");
+        } catch (SQLException sqlException) {
+            System.out.println("Update Error: " + sqlException.getMessage());
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            st.close();
+            con.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+
+    }
+
+    public String filter(String name) {
+        return name.replaceAll("'", "''");
+    }
+
+    public void changeMP(MasterPassword oldMasterPassword, MasterPassword newMasterPassword) {
+        try {
+            st.execute("ALTER USER admin SET PASSWORD '" + newMasterPassword.getPassword() + "'");
+            ResultSet rs = st.executeQuery("SELECT username, pw FROM Password;");
+            Statement st2 = con.createStatement();
+            while (rs.next()) {
+                st2.execute("UPDATE Password " +
+                        "SET pw='" + FileCrypt.encryptText(FileCrypt.decryptText(rs.getString("pw"), oldMasterPassword.getPassword()), newMasterPassword.getPassword()) + "' " +
+                        "WHERE username='" + rs.getString("username") + "';");
+            }
+            newMasterPassword.clearPasswordCache();
+            oldMasterPassword.clearPasswordCache();
+        } catch (SQLException sqlException) {
+            System.out.println("Update Error: " + sqlException.getMessage());
+        }
+    }
+
+    public void addURL(String programName, String url) {
+        programName = filter(programName);
+        try {
+            st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS url varchar(255);");
+            st.execute("UPDATE ProgramName " +
+                    "SET url='" + url + "'" +
+                    "WHERE name='" + programName + "';");
+        } catch (SQLException sqlException) {
+            System.out.println("Update Error: " + sqlException.getMessage());
+        }
+    }
+
+    public String getUrl(String title) {
+        title = filter(title);
+        try {
+            st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS url varchar(255);");
+            ResultSet rs = st.executeQuery("SELECT url FROM ProgramName WHERE name='" + title + "';");
+            rs.next();
+            return rs.getString("url");
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+            System.out.println("Select Error: " + sqlException.getMessage());
+        }
+        return "";
     }
 }

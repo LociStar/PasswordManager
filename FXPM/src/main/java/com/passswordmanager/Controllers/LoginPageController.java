@@ -18,15 +18,14 @@ import javafx.stage.Window;
  * FXML Controller to control loginPage.fxml
  */
 public class LoginPageController {
+    private final Config config = new Config();
     @FXML
     public PasswordField passwordField;
-
     private PasswordListController passwordListController;
     private Stage passwordStage;
     private MasterPassword masterPassword;
     private boolean locked = true;
-
-    private final Config config = new Config();
+    private DatabaseConnectionHandler db;
 
     /**
      * Handles the event, if the unlock button is pressed.
@@ -46,17 +45,17 @@ public class LoginPageController {
             Stage stage = (Stage) window;
             stage.hide();
             passwordField.clear();
-            passwordListController.setDb(new DatabaseConnectionHandler(masterPassword.getPassword(), config.getDatabasePath()));
-            passwordListController.loadTable(masterPassword.getPassword());
+            this.db = new DatabaseConnectionHandler(masterPassword.getPassword(), config.getDatabasePath());
+            passwordListController.setDb(this.db);
+            passwordListController.loadTable();
             passwordListController.setMasterPassword(this.masterPassword);
             masterPassword.clearPasswordCache();
             stage = passwordStage;
             stage.setTitle("PasswordManager");
-            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.jpeg")));
+            stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));
             this.locked = false;
             stage.show();
         } else {
-            System.out.println(hash);
             System.out.println("Incorrect Password");
         }
 
@@ -119,5 +118,9 @@ public class LoginPageController {
 
     public boolean isLocked() {
         return locked;
+    }
+
+    public DatabaseConnectionHandler getDb() {
+        return db;
     }
 }
