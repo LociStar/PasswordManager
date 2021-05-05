@@ -47,7 +47,7 @@ public class LoginPageController {
             passwordField.clear();
             this.db = new DatabaseConnectionHandler(masterPassword.getPassword(), config.getDatabasePath());
             passwordListController.setDb(this.db);
-            passwordListController.loadTable(masterPassword.getPassword());
+            passwordListController.loadTable();
             passwordListController.setMasterPassword(this.masterPassword);
             masterPassword.clearPasswordCache();
             stage = passwordStage;

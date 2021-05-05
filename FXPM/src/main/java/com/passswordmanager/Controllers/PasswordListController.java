@@ -113,8 +113,7 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     public void hideAllPasswords() {
-        loadTable(masterPassword.getPassword());
-        masterPassword.clearPasswordCache();
+        loadTable();
     }
 
     private void showPassword() {
@@ -131,8 +130,7 @@ public class PasswordListController implements NativeKeyListener {
         TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         db.delete(tableView.getSelectionModel().getSelectedItem().getUsername(), accordion.getExpandedPane().getText());
         db.deleteEmptyPrograms();
-        loadTable(masterPassword.getPassword());
-        masterPassword.clearPasswordCache();
+        loadTable();
     }
 
     private TitledPane createTiltedPane(String name, String nickname, Map<String, String> list) {
@@ -194,8 +192,7 @@ public class PasswordListController implements NativeKeyListener {
             System.out.println(db.getKeyBehaviour(db.getPName(label)));
             settingUIController.getKeyShortCut().setText(db.getKeyBehaviour(db.getPName(label)));
             showStage(parent);
-            loadTable(masterPassword.getPassword());
-            masterPassword.clearPasswordCache();
+            loadTable();
 
         } catch (IOException ignored) {
             System.out.println("onPNameSettingPressed Error");
@@ -250,12 +247,10 @@ public class PasswordListController implements NativeKeyListener {
 
     /**
      * Decrypts the password list and loads the passwords into the table view
-     *
-     * @param masterPassword master password to decrypt the password list
      */
-    public void loadTable(String masterPassword) {
+    public void loadTable() {
         accordion.getPanes().removeAll(accordion.getPanes());
-        Map<String, Map<String, String>> hashMap = FileCrypt.getListDB(masterPassword, db);
+        Map<String, Map<String, String>> hashMap = FileCrypt.getListDB(db);
         hashMap.forEach((s, stringStringMap) -> {
             String[] names = s.split(" -:- ");
             if (names.length == 2) {
@@ -292,8 +287,7 @@ public class PasswordListController implements NativeKeyListener {
         dialogController.setDb(db);
         dialogController.setPNameText(pName);
         showStage(parent);
-        loadTable(masterPassword.getPassword());
-        masterPassword.clearPasswordCache();
+        loadTable();
     }
 
     private void createAddEntryDialog() throws IOException {

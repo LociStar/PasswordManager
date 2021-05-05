@@ -370,4 +370,18 @@ public class DatabaseConnectionHandler {
             System.out.println("Update Error: " + sqlException.getMessage());
         }
     }
+
+    public String getUrl(String title) {
+        title = filter(title);
+        try {
+            st.execute("ALTER TABLE ProgramName ADD COLUMN IF NOT EXISTS url varchar(255);");
+            ResultSet rs = st.executeQuery("SELECT url FROM ProgramName WHERE name='" + title + "';");
+            rs.next();
+            return rs.getString("url");
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+            System.out.println("Select Error: " + sqlException.getMessage());
+        }
+        return "";
+    }
 }

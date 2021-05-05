@@ -1,6 +1,7 @@
 package com.passswordmanager.Util;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import com.passswordmanager.Controllers.PasswordListController;
 import com.passswordmanager.Database.DatabaseConnectionHandler;
@@ -16,6 +17,7 @@ import javafx.stage.Stage;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,37 @@ public class PasswordCSV {
         this.masterPassword = masterPassword;
         this.urlErrors = new ArrayList<>();
         programList = new ArrayList<>();
+    }
+
+    public void exportPasswords() {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
+        fileChooser.setInitialFileName("PasswordManager_PasswordList");
+        fileChooser.setTitle("Where do you want to save the CSV?");
+        File file = fileChooser.showSaveDialog(this.stage);
+
+        if (file != null) {
+            savePasswordsToCSV(file);
+        }
+    }
+
+    private void savePasswordsToCSV(File file) {
+        Thread thread = new Thread(() -> {
+            try (CSVWriter writer = new CSVWriter(new FileWriter(file))) {
+                writer.writeNext(new String[]{"ProgramTitle", "Username", "Password", "URL"});
+                FileCrypt.getProgramBEncrypted(db, masterPassword).forEach(program -> {
+                    program.getPasswords().forEach(account -> {
+                        String[] s = new String[]{program.getTitle(), account.getUsername(), account.getPassword(), program.getUrl()};
+                        writer.writeNext(s);
+                    });
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
     }
 
     public void importPasswords() {
@@ -101,7 +134,7 @@ public class PasswordCSV {
                     System.out.println("Tasks completed: " + threadPoolExecutor.getCompletedTaskCount());
                     addListToDB();
                     Platform.runLater(() -> {
-                        passwordListController.loadTable(masterPassword.getPassword());
+                        passwordListController.loadTable();
                         masterPassword.clearPasswordCache();
                     });
                     JOptionPane.showMessageDialog(null, "Import has finished!", "Info:", JOptionPane.INFORMATION_MESSAGE);

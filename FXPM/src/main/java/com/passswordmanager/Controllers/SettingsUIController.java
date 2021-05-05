@@ -80,6 +80,9 @@ public class SettingsUIController {
 
     @FXML
     public void onExportPressed() {
+        PasswordCSV passwordCSV = new PasswordCSV(db, (Stage) databasePathField.getScene().getWindow(), masterPassword);
+        passwordCSV.setPasswordListController(passwordListController);
+        passwordCSV.exportPasswords();
     }
 
     @FXML
