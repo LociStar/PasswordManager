@@ -21,6 +21,7 @@ public class ChangeMPIController {
     public PasswordField oldPwd;
     private DatabaseConnectionHandler db;
     private MasterPassword oldMasterPassword;
+    private boolean pwChanged = false;
 
     @FXML
     public void onConfirmPressed(ActionEvent actionEvent) {
@@ -37,6 +38,7 @@ public class ChangeMPIController {
             oldMasterPassword.clearPasswordCache();
             oldMasterPassword.clearGuardedString();
             newMasterPassword.clearGuardedString();
+            pwChanged = true;
             closeStage(actionEvent);
         }
     }
@@ -58,5 +60,9 @@ public class ChangeMPIController {
 
     public void setOldMasterPassword(MasterPassword oldMasterPassword) {
         this.oldMasterPassword = oldMasterPassword;
+    }
+
+    public boolean isPwChanged() {
+        return pwChanged;
     }
 }

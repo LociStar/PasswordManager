@@ -116,6 +116,6 @@ public class SettingsUIController {
         stage.setScene(scene);
         stage.toFront();
         stage.showAndWait();
-        System.exit(0);
+        if (changeMPIController.isPwChanged()) System.exit(0);
     }
 }
