@@ -106,7 +106,9 @@ public class StartInBackground extends Application {
             passwordStage = new Stage();
             passwordStage.setScene(scene1);
             passwordStage.initStyle(StageStyle.DECORATED);
+
             PasswordListController passwordListController = loaderPL.getController();
+            passwordStage.setOnCloseRequest(event -> passwordListController.hideAllPasswords());
             passwordListController.setMasterPassword(loginPageController.getMasterPassword());
 
             loginPageController.setPasswordListController(passwordListController);

@@ -112,6 +112,11 @@ public class PasswordListController implements NativeKeyListener {
         tableView.refresh();
     }
 
+    public void hideAllPasswords() {
+        loadTable(masterPassword.getPassword());
+        masterPassword.clearPasswordCache();
+    }
+
     private void showPassword() {
         TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         TitledPane pane = accordion.getExpandedPane();
