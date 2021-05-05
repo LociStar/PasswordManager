@@ -5,12 +5,10 @@ import com.passswordmanager.Datatypes.Account;
 import com.passswordmanager.Datatypes.MasterPassword;
 import com.passswordmanager.Datatypes.Program;
 import com.passswordmanager.StartInBackground;
+import com.passswordmanager.Util.ActiveWindow;
 import com.passswordmanager.Util.Config;
 import com.passswordmanager.Util.FileCrypt;
 import com.passswordmanager.Util.Keyboard;
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -441,19 +439,9 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     public String getActiveWindow() {
-        //only Windows
-        char[] buffer = new char[MAX_TITLE_LENGTH * 2];
-        WinDef.HWND hwnd = User32.INSTANCE.GetForegroundWindow();
-        User32.INSTANCE.GetWindowText(hwnd, buffer, MAX_TITLE_LENGTH);
-        //do not edit
-        //System.out.println("Active window title: " + Native.toString(buffer).trim().split(" — ")[0].split(" – ")[0]);
-        String title = Native.toString(buffer).trim();
-        int i = title.lastIndexOf(" - ");
-        title = title.substring(0, i + 1);
-        if (i == -1) {
-            return Native.toString(buffer).trim().split(" — ")[0];
-        }
-        return title.substring(0, title.length() - 1);
+        ActiveWindow activeWindow = new ActiveWindow(MAX_TITLE_LENGTH);
+        System.out.println(activeWindow.getActiveWindow());
+        return activeWindow.getActiveWindow();
     }
 
     public void resetPassword() {
