@@ -44,7 +44,6 @@ public class PasswordListController implements NativeKeyListener {
     private final int MAX_TITLE_LENGTH = config.getMAX_TITLE_LENGTH();
     private final String icon = "/icon.png";
     @FXML
-    public PasswordField passwordField;
     public Accordion accordion;
     private MasterPassword masterPassword;
     private DatabaseConnectionHandler db;

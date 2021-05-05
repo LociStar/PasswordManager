@@ -32,8 +32,6 @@ public class SettingsUIController {
     @FXML
     private TextField masterPasswordField;
 
-    //private LoginPageController loginPageController;
-    //private PasswordListController passwordListController;
     private Config config;
 
     private DatabaseConnectionHandler db;
