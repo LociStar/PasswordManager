@@ -219,15 +219,16 @@ public class DatabaseConnectionHandler {
         return pName.equals("") ? nickname : pName;
     }
 
-    public void updateEntry(String pName, String oldUsername, String newUsername, String password) {
+    public void updateEntry(String pName, String oldUsername, String newUsername, String password, MasterPassword masterPassword) {
         pName = filter(pName);
         try {
-            if (password == null)
+            if (!password.equals("")) {
                 st.execute("UPDATE Password " +
-                        "SET usernaem='" + newUsername + "', " +
-                        "password='" + password + "' " +
+                        "SET username='" + newUsername + "', " +
+                        "pw='" + FileCrypt.encryptText(password, masterPassword.getPassword()) + "' " +
                         "WHERE username='" + oldUsername + "' AND pName='" + pName + "';");
-            else
+                masterPassword.clearPasswordCache();
+            } else
                 st.execute("UPDATE Password " +
                         "SET username='" + newUsername + "'" +
                         "WHERE username='" + oldUsername + "' AND pName='" + pName + "';");
