@@ -4,11 +4,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.passswordmanager.Controllers.SettingsUIController">
+<VBox xmlns:fx="http://javafx.com/fxml/1" id="VBox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.passswordmanager.Controllers.SettingsUIController">
    <children>
       <Label alignment="CENTER" minWidth="300.0" text="Settings">
          <font>
-            <Font name="System Bold" size="24.0" />
+            <Font name="System Bold" size="24.0"/>
          </font>
       </Label>
       <HBox alignment="CENTER" minWidth="140.0" prefHeight="50.0">

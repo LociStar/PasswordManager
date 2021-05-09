@@ -3,61 +3,77 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
-<AnchorPane minHeight="273.0" minWidth="500.0" prefHeight="273.0" prefWidth="485.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.passswordmanager.Controllers.AddEntryDialogController">
+<?import javafx.scene.text.Font?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" id="VBox" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1"
+      fx:controller="com.passswordmanager.Controllers.AddEntryDialogController">
     <children>
-        <VBox alignment="CENTER" layoutX="131.0" layoutY="50.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+        <Label fx:id="description" text="Add a new Account">
+            <font>
+                <Font name="System Bold" size="24.0"/>
+            </font>
+        </Label>
+        <HBox alignment="CENTER" spacing="10.0">
             <children>
-                <Text fx:id="description" strokeType="OUTSIDE" strokeWidth="0.0" text="Add new Password Entry"/>
-                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
-                    <children>
-                        <Label alignment="CENTER_RIGHT" minWidth="120.0" prefHeight="17.0" prefWidth="120.0" text="Program Name" />
-                        <TextField fx:id="pName" HBox.hgrow="ALWAYS" />
-                    </children>
-                    <padding>
-                        <Insets right="30.0" />
-                    </padding>
-                </HBox>
-                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
-                    <children>
-                        <Label alignment="CENTER_RIGHT" minWidth="120.0" prefHeight="17.0" prefWidth="120.0" text="Nickname of Program" />
-                        <TextField fx:id="nickname" prefHeight="25.0" prefWidth="301.0" HBox.hgrow="ALWAYS" />
-                    </children>
-                    <padding>
-                        <Insets right="30.0" />
-                    </padding>
-                </HBox>
-                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
-                    <children>
-                        <Label alignment="CENTER_RIGHT" minWidth="120.0" prefHeight="17.0" prefWidth="120.0" text="Username" />
-                        <TextField fx:id="username" HBox.hgrow="ALWAYS" />
-                    </children>
-                    <padding>
-                        <Insets right="30.0" />
-                    </padding>
-                </HBox>
-            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
-               <children>
-                  <Label alignment="CENTER_RIGHT" minWidth="120.0" prefHeight="17.0" prefWidth="120.0" text="Password" />
-                  <PasswordField fx:id="password" HBox.hgrow="ALWAYS" />
-                  <Button minWidth="62.0" mnemonicParsing="false" onAction="#onRandomPressed" text="Random" />
-               </children>
-               <padding>
-                  <Insets right="30.0" />
-               </padding>
-            </HBox>
-                <HBox alignment="CENTER_RIGHT">
-                    <children>
-                        <Button fx:id="button" mnemonicParsing="false" onAction="#btnAddClicked" text="Add"/>
-                    </children>
-                    <opaqueInsets>
-                        <Insets />
-                    </opaqueInsets>
-                    <padding>
-                        <Insets right="30.0" />
-                    </padding>
-                </HBox>
+                <Label alignment="CENTER_RIGHT" minWidth="120.0" prefHeight="17.0" prefWidth="120.0" text="Program Name"/>
+                <TextField fx:id="pName" HBox.hgrow="ALWAYS"/>
             </children>
-        </VBox>
+            <padding>
+                <Insets right="10.0"/>
+            </padding>
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+        </HBox>
+        <HBox alignment="CENTER" spacing="10.0">
+            <children>
+                <Label alignment="CENTER_RIGHT" minWidth="120.0" prefHeight="17.0" prefWidth="120.0" text="Nickname of Program"/>
+                <TextField fx:id="nickname" prefHeight="25.0" prefWidth="301.0" HBox.hgrow="ALWAYS"/>
+            </children>
+            <padding>
+                <Insets right="10.0"/>
+            </padding>
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+        </HBox>
+        <HBox alignment="CENTER" spacing="10.0">
+            <children>
+                <Label alignment="CENTER_RIGHT" minWidth="120.0" prefHeight="17.0" prefWidth="120.0" text="Username"/>
+                <TextField fx:id="username" HBox.hgrow="ALWAYS"/>
+            </children>
+            <padding>
+                <Insets right="10.0"/>
+            </padding>
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+        </HBox>
+        <HBox alignment="CENTER" spacing="10.0">
+            <children>
+                <Label alignment="CENTER_RIGHT" minWidth="120.0" prefHeight="17.0" prefWidth="120.0" text="Password"/>
+                <PasswordField fx:id="password" HBox.hgrow="ALWAYS"/>
+                <Button minWidth="62.0" mnemonicParsing="false" onAction="#onRandomPressed" text="Random"/>
+            </children>
+            <padding>
+                <Insets right="10.0"/>
+            </padding>
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+        </HBox>
+        <HBox alignment="CENTER_RIGHT">
+            <children>
+                <Button fx:id="button" mnemonicParsing="false" onAction="#btnAddClicked" text="Add"/>
+            </children>
+            <opaqueInsets>
+                <Insets/>
+            </opaqueInsets>
+            <padding>
+                <Insets right="10.0"/>
+            </padding>
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+        </HBox>
     </children>
-</AnchorPane>
+</VBox>

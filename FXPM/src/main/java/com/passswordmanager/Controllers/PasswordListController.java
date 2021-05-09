@@ -13,7 +13,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -35,6 +34,7 @@ import java.awt.datatransfer.StringSelection;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * FXML Controller to control passwordListController.fxml
@@ -64,6 +64,7 @@ public class PasswordListController implements NativeKeyListener {
      * copy the name to the clipboard
      */
     public void getName() {
+        @SuppressWarnings("unchecked")
         TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                 new StringSelection(tableView.getSelectionModel().getSelectedItem().getUsername()), null
@@ -74,6 +75,7 @@ public class PasswordListController implements NativeKeyListener {
      * copy the password to the clipboard
      */
     public void getPassword() {
+        @SuppressWarnings("unchecked")
         TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         Account account = db.getPassword(tableView.getSelectionModel().getSelectedItem().getUsername(), accordion.getExpandedPane().getText());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
@@ -84,12 +86,14 @@ public class PasswordListController implements NativeKeyListener {
 
     public ContextMenu createContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
+        //contextMenu.getStyleClass().add("menu");
         //create new MenuItem
         MenuItem copyName = new MenuItem("copy Name");
         MenuItem copyPassword = new MenuItem("copy Password");
         MenuItem deletePassword = new MenuItem("delete Entry");
         MenuItem showPassword = new MenuItem("show Password");
         MenuItem hidePassword = new MenuItem("hide Password");
+        //copyName.getStyleClass().add("menu");
         //add MenuItem to ContextMenu
         contextMenu.getItems().add(copyName);
         contextMenu.getItems().add(copyPassword);
@@ -107,6 +111,7 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     private void hidePassword() {
+        @SuppressWarnings("unchecked")
         TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         tableView.getSelectionModel().getSelectedItem().setPassword("********");
         tableView.refresh();
@@ -117,6 +122,7 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     private void showPassword() {
+        @SuppressWarnings("unchecked")
         TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         TitledPane pane = accordion.getExpandedPane();
         String username = tableView.getSelectionModel().getSelectedItem().getUsername();
@@ -127,6 +133,7 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     private void deletePassword() {
+        @SuppressWarnings("unchecked")
         TableView<Account> tableView = (TableView<Account>) accordion.getExpandedPane().getContent();
         db.delete(tableView.getSelectionModel().getSelectedItem().getUsername(), accordion.getExpandedPane().getText());
         db.deleteEmptyPrograms();
@@ -158,15 +165,21 @@ public class PasswordListController implements NativeKeyListener {
 
         ObservableList<Account> data = FXCollections.observableArrayList();
         list.forEach((s, s2) -> data.add(new Account(s, "********")));
-
         tableView.setItems(data);
+
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setFixedCellSize(25);
+        tableView.prefHeightProperty().bind(tableView.fixedCellSizeProperty().multiply(Bindings.size(tableView.getItems()).add(1)));
+        tableView.minHeightProperty().bind(tableView.prefHeightProperty());
+        tableView.maxHeightProperty().bind(tableView.prefHeightProperty());
 
         TitledPane titledPane = new TitledPane(label, tableView);
         Button button = new Button();
-        button.setText("Setting");
+        button.setText("Settings");
         button.setOnAction(actionEvent -> onPNameSettingPressed(label));
         titledPane.setGraphic(button);
         titledPane.setContentDisplay(ContentDisplay.RIGHT);
+        titledPane.setAnimated(false);
 
         final double graphicMarginRight = 15; //change it, if needed
         button.translateXProperty().bind(Bindings.createDoubleBinding(
@@ -201,9 +214,12 @@ public class PasswordListController implements NativeKeyListener {
 
     private void onTableViewClickBehaviour(TableView<Account> tableView) {
         try {
+            @SuppressWarnings("unchecked")
             TableView<Account> tableView1 = (TableView<Account>) accordion.getExpandedPane().getContent();
             String pName = accordion.getExpandedPane().getText();
             Account account = tableView1.getSelectionModel().getSelectedItem();
+
+            if (account == null) return;
 
             FXMLLoader fxmlLoader = loadFXML("addEntryDialog");
             Parent parent = fxmlLoader.load();
@@ -221,7 +237,7 @@ public class PasswordListController implements NativeKeyListener {
 
             dialogController.getButton().setText("Confirm");
             dialogController.getButton().setOnAction(actionEvent -> {
-                db.updateEntry(pName, account.getUsername(), dialogController.getUsernameText(), dialogController.getPasswordText());
+                db.updateEntry(pName, account.getUsername(), dialogController.getUsernameText(), dialogController.getPasswordText(), masterPassword);
                 account.setUsername(dialogController.getUsernameText());
                 hidePassword();
                 Stage stage = (Stage) dialogController.getButton().getScene().getWindow();
@@ -237,6 +253,7 @@ public class PasswordListController implements NativeKeyListener {
 
     private void showStage(Parent parent) {
         Scene scene = new Scene(parent);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         Stage stage = new Stage();
         stage.setTitle("PasswordManager");
         stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
@@ -246,12 +263,17 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     /**
-     * Decrypts the password list and loads the passwords into the table view
+     * loads the passwordsList (encrypted) into the table view
      */
     public void loadTable() {
         accordion.getPanes().removeAll(accordion.getPanes());
         Map<String, Map<String, String>> hashMap = FileCrypt.getListDB(db);
-        hashMap.forEach((s, stringStringMap) -> {
+
+        //sort hashMap
+        TreeMap<String, TreeMap<String, String>> sorted = new TreeMap<>();
+        hashMap.forEach((s, stringStringMap) -> sorted.put(s, new TreeMap<>(stringStringMap)));
+
+        sorted.forEach((s, stringStringMap) -> {
             String[] names = s.split(" -:- ");
             if (names.length == 2) {
                 accordion.getPanes().add(createTiltedPane(names[0], names[1], stringStringMap));
@@ -305,7 +327,7 @@ public class PasswordListController implements NativeKeyListener {
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
         if (STRG_ALT_A(e)) return;
-        if (STRG_ALT_Y(e)) return;
+        STRG_ALT_Y(e);
     }
 
     @Override
@@ -336,7 +358,7 @@ public class PasswordListController implements NativeKeyListener {
         }
     }
 
-    private boolean STRG_ALT_Y(NativeKeyEvent e) {
+    private void STRG_ALT_Y(NativeKeyEvent e) {
         //STRG+ALT+Y  -> write Password
         if ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0
                 && (e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0
@@ -344,7 +366,7 @@ public class PasswordListController implements NativeKeyListener {
 
             if (masterPassword == null || masterPassword.isEmpty()) {
                 System.out.println("PasswordManager is Locked");
-                return true;
+                return;
             }
 
             masterPassword.clearPasswordCache();
@@ -352,19 +374,17 @@ public class PasswordListController implements NativeKeyListener {
 
             Program program = db.getPasswords(activeWindow);
             //no match found
-            if (program.getPasswords().size() == 0) return true;
+            if (program.getPasswords().size() == 0) return;
             else if (program.getPasswords().size() > 1) {
                 Platform.runLater(() -> startSelectionDialog(program, true));
-                return true;
+                return;
             }
 
             Account account = program.getPasswords().get(0);
 
             sendKeys(FileCrypt.decryptText(account.getPassword(), masterPassword.getPassword()));
             masterPassword.clearPasswordCache();
-            return true;
         }
-        return false;
     }
 
     private boolean STRG_ALT_A(NativeKeyEvent e) {
@@ -409,6 +429,7 @@ public class PasswordListController implements NativeKeyListener {
         }
         assert parent != null;
         Scene scene = new Scene(parent);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         Stage stage = new Stage();
         UserSelectionDialogController userSelectionDialogController = fxmlLoader.getController();
         userSelectionDialogController.setEntry(program);
@@ -451,7 +472,7 @@ public class PasswordListController implements NativeKeyListener {
     }
 
     @FXML
-    public void onSettingsPressed(ActionEvent actionEvent) {
+    public void onSettingsPressed() {
         FXMLLoader fxmlLoader = loadFXML("settingsUI");
         Parent parent = null;
         try {
@@ -461,6 +482,7 @@ public class PasswordListController implements NativeKeyListener {
         }
         assert parent != null;
         Scene scene = new Scene(parent);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         Stage stage = new Stage();
         stage.setTitle("PasswordManager");
         stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
@@ -470,14 +492,8 @@ public class PasswordListController implements NativeKeyListener {
         settingsUIController.loadConfig();
         settingsUIController.setDb(db);
         settingsUIController.setMasterPassword(masterPassword);
-        //stage.initStyle(StageStyle.UNDECORATED);
-        //stage.initModality(Modality.WINDOW_MODAL);
         stage.toFront();
         stage.setScene(scene);
         stage.showAndWait();
-    }
-
-    public Config getConfig() {
-        return config;
     }
 }

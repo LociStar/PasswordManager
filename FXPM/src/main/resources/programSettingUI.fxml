@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox xmlns:fx="http://javafx.com/fxml/1 " alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+<VBox xmlns:fx="http://javafx.com/fxml/1" id="VBox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" prefWidth="380.0" xmlns="http://javafx.com/javafx/11.0.1"
       fx:controller="com.passswordmanager.Controllers.ProgramSettingUIController">
    <children>
@@ -64,7 +64,7 @@
                         <Tooltip text="Keywords: USERNAME, PASSWORD, TAB, ENTER"/>
                      </tooltip>
                   </TextField>
-                  <Label style="-fx-background-color: #a1a1a1; -fx-background-radius: 0 3 3 0;" text="?" underline="true">
+                  <Label style="-fx-background-color: #363636; -fx-background-radius: 0 3 3 0;" text="?" textFill="WHITE" underline="true">
                      <font>
                         <Font name="System Bold" size="16.0"/>
                      </font>

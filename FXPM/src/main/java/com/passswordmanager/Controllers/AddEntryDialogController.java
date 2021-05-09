@@ -6,16 +6,12 @@ import com.passswordmanager.Util.FileCrypt;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import javafx.scene.text.Text;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 public class AddEntryDialogController {
     @FXML
-    public Text description;
+    public Label description;
 
     @FXML
     public Button button;

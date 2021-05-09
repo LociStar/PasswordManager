@@ -86,6 +86,8 @@ public class PasswordCSV {
         dialog.setHeaderText("The information about the browser is needed, to correctly import the password-list");
         dialog.setContentText("Choose the BrowserCSV format:");
 
+        dialog.getDialogPane().getScene().getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
