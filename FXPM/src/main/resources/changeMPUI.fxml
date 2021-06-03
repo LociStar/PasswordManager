@@ -4,8 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.passswordmanager.Controllers.ChangeMPIController">
+<VBox xmlns:fx="http://javafx.com/fxml/1" id="VBox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.passswordmanager.Controllers.ChangeMPIController">
    <children>
       <Label text="Change Master Password">
          <font>

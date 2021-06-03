@@ -18,7 +18,6 @@
         <maven.compiler.target>14</maven.compiler.target>
         <maven.compiler.release>14</maven.compiler.release>
         <javafx.version>16</javafx.version>
-        <jvm.options>-XX:+UseG1GC</jvm.options>
     </properties>
 
     <name>PasswordManager</name>

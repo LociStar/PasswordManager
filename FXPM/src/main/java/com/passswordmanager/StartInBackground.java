@@ -68,6 +68,7 @@ public class StartInBackground extends Application {
             InstallUIController installUIController = loaderLP.getController();
             installUIController.setDatabasePath(System.getenv("APPDATA") + "\\PasswordManager");
             Scene scene = new Scene(parent);
+            scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
             stage.setTitle("PasswordManager");
             stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream(icon)));
             stage.setOnCloseRequest(event -> {
@@ -93,6 +94,7 @@ public class StartInBackground extends Application {
             Parent parent = loaderLP.load();
             this.loginPageController = loaderLP.getController();
             Scene scene = new Scene(parent);
+            scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
             scene.setFill(Color.TRANSPARENT);
 
             stage.setScene(scene);
@@ -106,6 +108,7 @@ public class StartInBackground extends Application {
             passwordStage = new Stage();
             passwordStage.setScene(scene1);
             passwordStage.initStyle(StageStyle.DECORATED);
+            scene1.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
             PasswordListController passwordListController = loaderPL.getController();
             passwordStage.setOnCloseRequest(event -> passwordListController.hideAllPasswords());

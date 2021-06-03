@@ -109,6 +109,7 @@ public class SettingsUIController {
         changeMPIController.setOldMasterPassword(masterPassword);
 
         Scene scene = new Scene(parent);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         Stage stage = new Stage();
         stage.setTitle("PasswordManager");
         stage.getIcons().add(new Image(StartInBackground.class.getResourceAsStream("/icon.png")));

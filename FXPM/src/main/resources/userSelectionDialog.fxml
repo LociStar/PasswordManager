@@ -3,15 +3,16 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.passswordmanager.Controllers.UserSelectionDialogController">
-   <children>
-      <TableView fx:id="table" onKeyReleased="#onKeyReleased" VBox.vgrow="ALWAYS">
-         <columns>
-            <TableColumn maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" text="Username" />
-         </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-      </TableView>
-   </children>
+<VBox xmlns:fx="http://javafx.com/fxml/1" id="VBox" xmlns="http://javafx.com/javafx/11.0.1"
+      fx:controller="com.passswordmanager.Controllers.UserSelectionDialogController">
+    <children>
+        <TableView fx:id="table" onKeyReleased="#onKeyReleased" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" text="Username"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+    </children>
 </VBox>
