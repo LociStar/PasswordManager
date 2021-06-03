@@ -34,7 +34,11 @@ public class LoginPageController {
     public void onUnlockPressed() {
         //the hashed master password
         String hash = config.getMasterPassword();
-        boolean matched = SCryptUtil.check(passwordField.getText(), hash);
+        boolean matched;
+        if (passwordField.getText().equals(""))
+            matched = false;
+        else
+            matched = SCryptUtil.check(passwordField.getText(), hash);
         if (matched) {
             char[] password = passwordField.getText().toCharArray();
             this.masterPassword = new MasterPassword(password);
@@ -56,6 +60,7 @@ public class LoginPageController {
             this.locked = false;
             stage.show();
         } else {
+            passwordField.setStyle("-fx-border-color: red");
             System.out.println("Incorrect Password");
         }
 
